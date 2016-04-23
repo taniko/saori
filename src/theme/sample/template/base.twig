@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{maker.getBlogTitle}}</title>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body>
+        <div id="blog-header">
+            <div class="container">
+                <h1 id="blog-title"><a href="/">{{maker.getBlogTitle}}</a></h1>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div id="blog-main" class="col-xs-12 col-md-8">
+                    {% block main_block %}{% endblock %}
+                </div>
+                <div id="blog-side" class="col-xs-12 col-md-3 col-md-offset-1">
+                    {% block side_block %}
+                        {% if not maker.loadMarkdown('profile.md') is empty %}
+                            {% autoescape false %}
+                                {{ maker.loadMarkdown('profile.md')}}
+                            {% endautoescape %}
+                        {% endif %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,15 @@
+{
+    "name": "hrgruri/saori",
+    "description": "blog tool for user_name.github.io",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Hrgruri\\Saori\\":"src"
+        }
+    },
+    "require": {
+        "php": ">=7.0.0",
+        "twig/twig": "^1.24",
+        "cebe/markdown": "^1.1"
+    }
+}

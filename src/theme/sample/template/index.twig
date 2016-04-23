@@ -1,0 +1,20 @@
+{% extends 'base.twig' %}
+
+{% block main_block %}
+    {% for article in maker.getNewestArticle(maker.theme_config.noapp) %}
+        <div class="blog-article">
+            <h1 class="blog-article-title"><a href="{{article.link}}">{{article.title|title}}</a></h1>
+            <div class="blog-article-meta">{{article.getDate}}</div>
+            <div class="blog-article-contents">
+                {% autoescape false %}
+                    {{article.html}}
+                {% endautoescape %}
+            </div>
+        </div>
+    {% endfor %}
+    {% if maker.existsNextArticlePage(1, maker.noapp) > 0 %}
+        <ul class = "pager">
+            <li class = "next_link"><a href = "/page/2">Next &rarr;</a></li>
+        </ul>
+    {% endif %}
+{% endblock %}
