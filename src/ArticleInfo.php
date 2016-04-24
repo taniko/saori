@@ -1,5 +1,5 @@
 <?php
-namespace Hrgruri\Saori;
+namespace hrgruri\saori;
 
 class ArticleInfo
 {

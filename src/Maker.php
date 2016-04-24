@@ -1,7 +1,7 @@
 <?php
-namespace Hrgruri\Saori;
+namespace hrgruri\saori;
 
-use Hrgruri\Saori\{ArticleInfo, Article};
+use hrgruri\saori\{ArticleInfo, Article};
 use cebe\markdown\GithubMarkdown;
 
 class Maker
