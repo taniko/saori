@@ -1,7 +1,7 @@
 Saori
 ====
 
-blog tool for username.github.io
+static site generator
 
 ## Setting
 main.php
