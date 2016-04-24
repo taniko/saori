@@ -11,14 +11,16 @@ class Maker
     private $contents_path;
     public  $theme_config;
     public  $noapp;
+    public  $tag_list;
 
-    public function __construct($config, $article_list, $path, $tc)
+    public function __construct($config, $article_list, $path, $tc, $tag_list)
     {
         $this->config        = $config;
         $this->article_list  = $article_list;
         $this->contents_path = $path;
         $this->theme_config  = $tc;
         $this->noapp         = $this->theme_config->noapp ?? 10;
+        $this->tag_list      = $tag_list;
     }
     /**
      * @return string
@@ -133,5 +135,10 @@ class Maker
             $html = $this->getHtml("{$this->contents_path}/markdown/{$name}");
         }
         return $html;
+    }
+
+    public function getTagList()
+    {
+        return array_keys($this->tag_list);
     }
 }

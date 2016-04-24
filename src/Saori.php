@@ -12,6 +12,7 @@ class Saori
     private $path;
     private $article_list;
     private $theme_config;
+    private $tag_list;
 
     public function __construct(string $root)
     {
@@ -95,21 +96,27 @@ class Saori
             $article->path = "{$this->path['cache']}{$article->link}";
         }
 
-        /* make local */
-        $this->copyTheme($this->path['local']);
-        $this->copyDirectory($this->path['article'], "{$this->path['local']}/article");
-        $this->makeIndex($this->config->local,$this->path['local']);
-        $this->makeArticle($this->config->local,$this->path['local']);
-        $this->makeArticlesPage($this->config->local,$this->path['local']);
+        /* make local   */
+        $url    = $this->config->local;
+        $path   = $this->path['local'];
+        $this->copyTheme($path);
+        $this->copyDirectory($this->path['article'], "{$path}/article");
+        $this->makeIndex($url, $path);
+        $this->makeArticle($url, $path);
+        $this->makeArticlesPage($url, $path);
+        $this->makeTagPage($url, $path);
 
-        /* make Public*/
-        $this->copyTheme($this->path['public']);
-        $this->copyDirectory($this->path['article'], "{$this->path['public']}/article");
-        $this->makeIndex($this->config->local,$this->path['public']);
-        $this->makeArticle($this->config->local,$this->path['public']);
-        $this->makeArticlesPage($this->config->local,$this->path['public']);
+        /* make Public  */
+        $url    = "https://{$this->config->id}.github.io";
+        $path   = $this->path['public'];
+        $this->copyTheme($path);
+        $this->copyDirectory($this->path['article'], "{$path}/article");
+        $this->makeIndex($url, $path);
+        $this->makeArticle($url, $path);
+        $this->makeArticlesPage($url, $path);
+        $this->makeTagPage($url, $path);
 
-        // clear cache
+        /*  clear cache */
         $this->clearDirectory($this->path['cache']);
     }
 
@@ -128,7 +135,7 @@ class Saori
             throw new \Exception("undefined value exists. please check config.json");
         } elseif (!($config->link instanceof \stdClass)) {
             throw new \Exception('link must be object');
-        } elseif (!is_dir(dirname(__FILE__)."/theme/{$config->theme}")) {
+        } elseif (!is_dir(__DIR__. "/theme/{$config->theme}")) {
             throw new \Exception('not found theme');
         }
         return $flag;
@@ -137,12 +144,13 @@ class Saori
     private function loadConfig()
     {
         $data   = json_decode(file_get_contents("{$this->root}/config.json"));
+        $data->local = rtrim($data->local, '/');
         $this->path['public']   =   "{$this->root}/{$data->id}.github.io";
-        $this->path['theme']    =   dirname(__FILE__)."/theme/{$data->theme}";
+        $this->path['theme']    =   __DIR__."/theme/{$data->theme}";
         $this->config           =   $data;
-        if (file_exists(dirname(__FILE__)."/theme/{$data->theme}/config.json")) {
+        if (file_exists(__DIR__ . "/theme/{$data->theme}/config.json")) {
             $this->theme_config = json_decode(
-                file_get_contents(dirname(__FILE__)."/theme/{$data->theme}/config.json")
+                file_get_contents(__DIR__ ."/theme/{$data->theme}/config.json")
             );
         } else {
             $this->theme_config = null;
@@ -196,6 +204,7 @@ class Saori
 
     private function getArticleList()
     {
+        $tags = [];
         $result = [];
         $dir = $this->path['article'];
         if (!is_dir($dir)) {
@@ -219,8 +228,8 @@ class Saori
                                 } elseif (!file_exists("{$path}/article.md") || !file_exists("{$path}/config.json")) {
                                     continue;
                                 }
-                                $info = json_decode(file_get_contents("{$path}/config.json"));
-                                $result[] = new ArticleInfo(
+                                $info       = json_decode(file_get_contents("{$path}/config.json"));
+                                $result[]   = new ArticleInfo(
                                     $info->timestamp,
                                     $path,
                                     $info->title,
@@ -243,7 +252,13 @@ class Saori
             $article->newer_link = isset($result[$i - 1]) ? $result[$i - 1]->link : null;
             $article->older_link = isset($result[$i + 1]) ? $result[$i + 1]->link : null;
             $article->id = $i++;
+            sort($article->tag, SORT_NATURAL);
+            foreach($article->tag as $tag) {
+                $tags[$tag][] = $article->id;
+            }
         }
+        ksort($tags, SORT_NATURAL);
+        $this->tag_list = $tags;
         return $result;
     }
 
@@ -282,8 +297,8 @@ class Saori
         $maker      = $this->getMaker();
         $twig       = new \Twig_Environment(new \Twig_Loader_Filesystem("{$this->path['theme']}/template"));
         $template   = $twig->loadTemplate('articles.twig');
-        $noapp  = $this->theme_config->noapp ?? 10;
-        $noapp  = (is_int($noapp) && $noapp > 0) ? $noapp : 10;
+        $noapp      = $this->theme_config->noapp ?? 10;
+        $noapp      = (is_int($noapp) && $noapp > 0) ? $noapp : 10;
         for ($i = 1, $j = count($this->article_list); $j > 0; $j = $j - $noapp, $i++) {
             mkdir("{$to}/page/{$i}", 0700, true);
             $articles   = null;
@@ -298,6 +313,47 @@ class Saori
                 'next_page' =>  ($j - $noapp > 0) ? '/page/'.(string)($i+1) : null
             ));
             file_put_contents("{$to}/page/{$i}/index.html", $html);
+        }
+    }
+
+    private function makeTagPage(string $url, string $to)
+    {
+        $maker      = $this->getMaker();
+        $twig       = new \Twig_Environment(new \Twig_Loader_Filesystem("{$this->path['theme']}/template"));
+        $template   = $twig->loadTemplate('tags.twig');
+        $html = $template->render(array(
+            'maker'     =>  $maker
+        ));
+        mkdir("{$to}/tag", 0700, true);
+        file_put_contents("{$to}/tag/index.html", $html);
+        $template   = $twig->loadTemplate('articles.twig');
+        $noapp      = $this->theme_config->noapp ?? 10;
+        $noapp      = (is_int($noapp) && $noapp > 0) ? $noapp : 10;
+        foreach ($this->tag_list as $tag => $tag_ids) {
+            for ($i = 1; count($tag_ids) > 0; $i++) {
+                $articles   = [];
+                $ids        = [];
+                for ($j = 0; $j < $noapp; $j++) {
+                    if (($id = array_shift($tag_ids)) === null) {
+                        break;
+                    }
+                    $ids[] = $id;
+                }
+                foreach ($ids as $id) {
+                    $articles[] = new Article($this->article_list[$id]);
+                }
+                $html = $template->render(array(
+                    'maker'     =>  $maker,
+                    'articles'  =>  $articles,
+                    'prev_page' =>  ($i != 1)               ? "/tag/{$tag}/".(string)($i-1) : null,
+                    'next_page' =>  (count($tag_ids) > 0)   ? "/tag/{$tag}/".(string)($i+1) : null
+                ));
+                mkdir("{$to}/tag/{$tag}/{$i}", 0700, true);
+                if ($i === 1) {
+                    file_put_contents("{$to}/tag/{$tag}/index.html", $html);
+                }
+                file_put_contents("{$to}/tag/{$tag}/{$i}/index.html", $html);
+            }
         }
     }
 
@@ -353,7 +409,8 @@ class Saori
             $this->config,
             $this->article_list,
             $this->path['contents'],
-            $this->theme_config
+            $this->theme_config,
+            $this->tag_list
         );
     }
 }

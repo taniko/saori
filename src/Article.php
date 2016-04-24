@@ -8,7 +8,7 @@ class Article
 {
     private $id;
     public $title;
-    public $tag;
+    public $tags;
     public $html;
     public $timestamp;
     public $link;
@@ -19,7 +19,7 @@ class Article
     {
         $this->id           =   $info->id;
         $this->title        =   $info->title;
-        $this->tag          =   $info->tag;
+        $this->tags         =   $info->tag;
         $this->html         =   (new GithubMarkdown)->parse(file_get_contents("{$info->path}/article.md"));
         $this->timestamp    =   $info->timestamp;
         $this->link         =   $info->link;
@@ -52,5 +52,11 @@ class Article
     public function getDate(string $format = 'F j, Y')
     {
         return date($format, $this->timestamp);
+    }
+
+    public function getTags()
+    {
+        ksort($this->tags);
+        return $this->tags;
     }
 }

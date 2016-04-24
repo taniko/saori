@@ -9,6 +9,14 @@
                 {{article.html}}
             {% endautoescape %}
         </div>
+        {% if article.tags | length > 0 %}
+            <ul class="blog-article-tags">
+                Tag:
+                {% for tag in article.tags %}
+                    <li><a href="/tag/{{tag}}">{{tag}}</a></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
     <ul class = "pager">
         {% if not article.newer_link is empty %}
