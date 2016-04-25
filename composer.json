@@ -10,6 +10,7 @@
     "require": {
         "php": ">=7.0.0",
         "twig/twig": "^1.24",
-        "cebe/markdown": "^1.1"
+        "cebe/markdown": "^1.1",
+        "mibe/feedwriter": "^1.0"
     }
 }

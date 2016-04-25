@@ -3,11 +3,14 @@ namespace hrgruri\saori;
 
 use hrgruri\saori\{ArticleInfo, Maker};
 use cebe\markdown\GithubMarkdown;
+use \FeedWriter\{Item, ATOM, Feed};
 
 class Saori
 {
     const SAORI_COMMANd =   ['init', 'post', 'make'];
     const CONFIG_LIST   =   ['id', 'local', 'title', 'author', 'theme', 'lang', 'link'];
+    const DEFAULT_FEED_TYPE     =   'atom';
+    const DEFAULT_FEED_NUMBER   =   100;
     private $root;
     private $path;
     private $article_list;
@@ -105,6 +108,7 @@ class Saori
         $this->makeArticle($url, $path);
         $this->makeArticlesPage($url, $path);
         $this->makeTagPage($url, $path);
+        $this->makeFeedPage($url, $path);
 
         /* make Public  */
         $url    = "https://{$this->config->id}.github.io";
@@ -115,6 +119,7 @@ class Saori
         $this->makeArticle($url, $path);
         $this->makeArticlesPage($url, $path);
         $this->makeTagPage($url, $path);
+        $this->makeFeedPage($url, $path);
 
         /*  clear cache */
         $this->clearDirectory($this->path['cache']);
@@ -412,5 +417,37 @@ class Saori
             $this->theme_config,
             $this->tag_list
         );
+    }
+
+    private function makeFeedPage(string $url, string $path)
+    {
+        $type = $this->config->feed->type ?? self::DEFAULT_FEED_TYPE;
+        if ($type === 'atom') {
+            $this->makeAtomFeed($url, $path);
+        } else {
+            throw new \Exception("Uknown feed type");
+        }
+    }
+
+    private function makeAtomFeed(string $url, string $path)
+    {
+        $atom = new ATOM;
+        $atom->setTitle((string)$this->config->title);
+        $atom->setLink($url);
+        $atom->setDate(new \DateTime());
+        $number = $this->config->feed->number ?? self::DEFAULT_FEED_NUMBER;
+        $number = is_int($number) && $number > 0 ? $number : self::DEFAULT_FEED_TYPE;
+        for ($i = 0 ; $i < $number && $i < count($this->article_list); $i++) {
+            $article = new Article($this->article_list[$i]);
+            $item = $atom->createNewItem() ;
+            $item->setAuthor((string)($this->config->author));
+            $item->setTitle($article->title);
+            $item->setLink($article->link);
+            $item->setDate($article->timestamp);
+            $item->setDescription($article->html);
+            $atom->addItem($item);
+        }
+        mkdir("{$path}/feed", 0700, true);
+        file_put_contents("{$path}/feed/atom.xml", $atom->generateFeed());
     }
 }

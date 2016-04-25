@@ -8,5 +8,9 @@
     "link"      :   {
         "github"    :   "https://github.com",
         "twitter"   :   "https://twitter.com"
+    },
+    "feed" : {
+        "type" : "atom",
+        "number": 30
     }
 }
