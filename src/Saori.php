@@ -186,7 +186,7 @@ class Saori
     private function copyDirectory(string $from, string $to)
     {
         if (!is_dir($to)) {
-            mkdir($to);
+            mkdir($to, 0700, true);
         }
         if ($dh = opendir($from)) {
             while (($file = readdir($dh)) !== false) {

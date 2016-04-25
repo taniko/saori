@@ -27,7 +27,7 @@ class Maker
      */
     public function getBlogTitle()
     {
-        return $this->config->title;
+        return (string)$this->config->title;
     }
 
     /**
@@ -35,7 +35,7 @@ class Maker
      */
     public function getBlogDescription()
     {
-        return isset($this->config->description) ? $this->config->description : null;
+        return isset($this->config->description) ? (string)$this->config->description : null;
     }
 
     /**
@@ -44,46 +44,52 @@ class Maker
     */
     public function getLink(string $name)
     {
-        return isset($this->config->link->{$name}) ? $this->config->link->{$name}: null;
+        return isset($this->config->link->{$name}) ? (string)$this->config->link->{$name}: null;
     }
 
+    /**
+     * @return string
+     */
     public function getLang()
     {
-        return $this->config->lang;
+        return (string)$this->config->lang;
     }
 
+    /**
+     * @return string
+     */
     public function getAuthor()
     {
-        return $this->config->author;
+        return (string)$this->config->author;
     }
 
     /**
      * @param  integer $count
-     * @return null | array of Article
+     * @return array
      */
     public function getNewestArticle(int $count = 1)
     {
-        $result = null;
+        $articles = [];
         $count  = $count > 0 ? $count : 1;
         $limit  = (count($this->article_list) < $count) ? count($this->article_list) : $count;
         $from   = strlen($this->contents_path);
         for ($i = 0; $i < $limit ; $i++) {
-            $result[] = new Article($this->article_list[$i]);
+            $articles[] = new Article($this->article_list[$i]);
         }
-        return $result;
+        return $articles;
     }
 
     /**
      * @param  Article  $article
-     * @param  integer  $count
+     * @param  integer  $number
      * @return null | array of Article
      */
-    public function getNextArticle(Article $article, int $count = 1)
+    public function getNextArticle(Article $article, int $number = 1)
     {
         $id     = $article->getId();
         $result = null;
-        $count  = $count > 0 ? $count : 1;
-        $limit  = $id + $count < count($this->article_list) ? $id + $count + 1 : count($this->article_list);
+        $number  = $number > 0 ? $number : 1;
+        $limit  = $id + $number < count($this->article_list) ? $id + $number + 1 : count($this->article_list);
         $from   = strlen($this->contents_path);
         for ($i = $id + 1; $i < $limit; $i++) {
             $result[] = new Article($this->article_list[$i]);
@@ -105,15 +111,15 @@ class Maker
 
     /**
      * @param  int    $page  corrent page number
-     * @param  int    $count number of articles par page
+     * @param  int    $number number of articles par page
      * @return bool
      */
-    public function existsNextArticlePage(int $page, int $count)
+    public function existsNextArticlePage(int $page, int $number)
     {
-        if ($page < 0 || $count <= 0) {
+        if ($page < 0 || $number <= 0) {
             return false;
         }
-        return (count($this->article_list) - $page * $count) > 0;
+        return (count($this->article_list) - $page * $number) > 0;
     }
 
     /**
@@ -143,6 +149,12 @@ class Maker
         return array_keys($this->tag_list);
     }
 
+
+    /**
+     * @param  string  $tag    tag name
+     * @param  integer $number number of articles
+     * @return array
+     */
     public function getArticleByTag(string $tag, int $number = 1)
     {
         $number     = $number > 0 ? $number : 1;
