@@ -125,10 +125,11 @@ class Maker
     }
 
     /**
-     * @param  string $name file name
+     * @param  string   $name file name
+     * @param  bool     $flag
      * @return null | string
      */
-    public function loadMarkdown(string $name)
+    public function loadMarkdown(string $name, bool $flag = true)
     {
         $html = null;
         if (file_exists("{$this->contents_path}/markdown/{$name}")) {
@@ -140,5 +141,18 @@ class Maker
     public function getTagList()
     {
         return array_keys($this->tag_list);
+    }
+
+    public function getArticleByTag(string $tag, int $number = 1)
+    {
+        $number     = $number > 0 ? $number : 1;
+        $articles   = [];
+        if (isset($this->tag_list[$tag])) {
+            $number = count($this->tag_list[$tag]) < $number ? count($this->tag_list[$tag]) : $number;
+            for ($i = 0; $i < $number; $i++) {
+                $articles[] = new Article($this->article_list[$this->tag_list[$tag][$i]]);
+            }
+        }
+        return $articles;
     }
 }

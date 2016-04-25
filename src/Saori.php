@@ -401,7 +401,7 @@ class Saori
     }
 
     /**
-     * @return maker
+     * @return Maker
      */
     private function getMaker()
     {
