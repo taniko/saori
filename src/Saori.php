@@ -448,6 +448,6 @@ class Saori
             $atom->addItem($item);
         }
         mkdir("{$path}/feed", 0700, true);
-        file_put_contents("{$path}/feed/atom.xml", $atom->generateFeed());
+        file_put_contents("{$path}/feed.atom", $atom->generateFeed());
     }
 }
