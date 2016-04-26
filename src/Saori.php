@@ -1,7 +1,8 @@
 <?php
 namespace hrgruri\saori;
 
-use hrgruri\saori\{ArticleInfo, Maker};
+use hrgruri\saori\{ArticleInfo, Maker, SiteGenerator};
+use hrgruri\saori\exception\GeneratorException;
 use cebe\markdown\GithubMarkdown;
 use \FeedWriter\{Item, ATOM, Feed};
 
@@ -9,13 +10,10 @@ class Saori
 {
     const SAORI_COMMANd =   ['init', 'post', 'make'];
     const CONFIG_LIST   =   ['id', 'local', 'title', 'author', 'theme', 'lang', 'link'];
-    const DEFAULT_FEED_TYPE     =   'atom';
-    const DEFAULT_FEED_NUMBER   =   100;
+    private $config;
     private $root;
     private $path;
-    private $article_list;
     private $theme_config;
-    private $tag_list;
 
     public function __construct(string $root)
     {
@@ -53,6 +51,7 @@ class Saori
 
     private function init(array $option)
     {
+        $result = true;
         if (is_dir($this->path['local'])) {
             throw new \Exception("directory({$this->path['local']}) already exists");
         } elseif (is_dir($this->path['public'])) {
@@ -60,8 +59,8 @@ class Saori
         } elseif (is_dir($this->path['article'])) {
             throw new \Exception("directory({$this->path['article']}) already exists");
         }
-        mkdir($this->path['local'], 0700);
-        mkdir($this->path['public'], 0700);
+        mkdir($this->path['local'], 0700, true);
+        mkdir($this->path['public'], 0700, true);
         mkdir($this->path['article'], 0700, true);
     }
 
@@ -70,7 +69,7 @@ class Saori
         $dir        = date('Y/m');
         $title      = $option[0] ?? date('dHi');
         $timestamp   = date('YmdHis');
-        if (preg_match('/^[\w-]*$/', $title) !== 1) {
+        if (preg_match('/^[\w-_]+$/', $title) !== 1) {
             throw new \Exception('error: title');
         }
         $dir = "{$this->path['article']}/{$dir}/{$title}";
@@ -84,45 +83,55 @@ class Saori
             "tag"       =>  [],
             "timestamp"  =>  time()
         ];
-        file_put_contents("{$dir}/config.json", json_encode($tmp, JSON_PRETTY_PRINT));
+        file_put_contents(
+            "{$dir}/config.json",
+            json_encode(
+                [
+                    "title"     =>  (string)$title,
+                    "tag"       =>  [],
+                    "timestamp"  =>  time()
+                ],
+                JSON_PRETTY_PRINT
+            )
+        );
     }
 
+    /**
+     * generate static site
+     * @param  array  $option
+     */
     private function make(array $option)
     {
         $this->clearDirectory($this->path['local'], true);
         $this->clearDirectory($this->path['public'], true);
         $this->clearDirectory($this->path['cache']);
-        $this->article_list =   $this->getArticleList();
-        $this->cacheArticle();
-        // rewrite path
-        foreach ($this->article_list as &$article) {
-            $article->path = "{$this->path['cache']}{$article->link}";
+        try {
+            $generator = new SiteGenerator(
+                $this->path,
+                $this->config,
+                $this->theme_config
+            );
+            $generator->generate(
+                $this->config->local,
+                $this->path['local']
+            );
+            $generator->generate(
+                "https://{$this->config->id}.github.io",
+                $this->path['public']
+            );
+        } catch (GeneratorException $e) {
+            print "GENERATOR EXCEPTION\n";
+            $this->clearDirectory($this->path['local'], true);
+            $this->clearDirectory($this->path['public'], true);
+            $result = false;
+        } catch (\Exception $e) {
+            print $e->getMessage();
+            $this->clearDirectory($this->path['local'], true);
+            $this->clearDirectory($this->path['public'], true);
+        } finally {
+            /*  clear cache */
+            $this->clearDirectory($this->path['cache']);
         }
-
-        /* make local   */
-        $url    = $this->config->local;
-        $path   = $this->path['local'];
-        $this->copyTheme($path);
-        $this->copyDirectory($this->path['article'], "{$path}/article");
-        $this->makeIndex($url, $path);
-        $this->makeArticle($url, $path);
-        $this->makeArticlesPage($url, $path);
-        $this->makeTagPage($url, $path);
-        $this->makeFeedPage($url, $path);
-
-        /* make Public  */
-        $url    = "https://{$this->config->id}.github.io";
-        $path   = $this->path['public'];
-        $this->copyTheme($path);
-        $this->copyDirectory($this->path['article'], "{$path}/article");
-        $this->makeIndex($url, $path);
-        $this->makeArticle($url, $path);
-        $this->makeArticlesPage($url, $path);
-        $this->makeTagPage($url, $path);
-        $this->makeFeedPage($url, $path);
-
-        /*  clear cache */
-        $this->clearDirectory($this->path['cache']);
     }
 
     private function checkConfig()
@@ -158,7 +167,7 @@ class Saori
                 file_get_contents(__DIR__ ."/theme/{$data->theme}/config.json")
             );
         } else {
-            $this->theme_config = null;
+            $this->theme_config = new \stdClass;
         }
     }
 
@@ -186,268 +195,5 @@ class Saori
         if ($flag !== true) {
             rmdir($dir);
         }
-    }
-
-    private function copyDirectory(string $from, string $to)
-    {
-        if (!is_dir($to)) {
-            mkdir($to, 0700, true);
-        }
-        if ($dh = opendir($from)) {
-            while (($file = readdir($dh)) !== false) {
-                if ($file === '.' || $file === '..') {
-                    continue;
-                } elseif (is_dir("{$from}/{$file}")) {
-                    $this->copyDirectory("{$from}/{$file}", "{$to}/{$file}");
-                } else {
-                    copy("{$from}/{$file}", "{$to}/{$file}");
-                }
-            }
-            closedir($dh);
-        }
-    }
-
-    private function getArticleList()
-    {
-        $tags = [];
-        $result = [];
-        $dir = $this->path['article'];
-        if (!is_dir($dir)) {
-            throw new \Exception();
-        }
-        if ($dh = opendir($dir)) {
-            while (($year = readdir($dh)) !== false) {
-                if ($year === '.' || $year === '..') {
-                    continue;
-                }
-                if ($dh_year = opendir("{$dir}/{$year}")) {
-                    while (($month = readdir($dh_year)) !== false) {
-                        if ($month === '.' || $month === '..') {
-                            continue;
-                        }
-                        if ($dh_month = opendir("{$dir}/{$year}/{$month}")) {
-                            while (($title = readdir($dh_month)) !== false) {
-                                $path = "{$dir}/{$year}/{$month}/{$title}";
-                                if ($title === '.' || $title === '..') {
-                                    continue;
-                                } elseif (!file_exists("{$path}/article.md") || !file_exists("{$path}/config.json")) {
-                                    continue;
-                                }
-                                $info       = json_decode(file_get_contents("{$path}/config.json"));
-                                $result[]   = new ArticleInfo(
-                                    $info->timestamp,
-                                    $path,
-                                    $info->title,
-                                    $info->tag,
-                                    "/article/{$year}/{$month}/{$title}"
-                                );
-                            }
-                        }
-                    }
-                }
-            }
-            closedir($dh);
-        }
-        usort($result, function ($a, $b) {
-            return $b->timestamp <=> $a->timestamp
-                ?: strnatcmp($a->title, $b->title);
-        });
-        $i = 0;
-        foreach ($result as $article) {
-            $article->newer_link = isset($result[$i - 1]) ? $result[$i - 1]->link : null;
-            $article->older_link = isset($result[$i + 1]) ? $result[$i + 1]->link : null;
-            $article->id = $i++;
-            sort($article->tag, SORT_NATURAL);
-            foreach($article->tag as $tag) {
-                $tags[$tag][] = $article->id;
-            }
-        }
-        ksort($tags, SORT_NATURAL);
-        $this->tag_list = $tags;
-        return $result;
-    }
-
-    private function makeArticle(string $url, string $to)
-    {
-        if (!is_dir("{$this->path['contents']}/article")) {
-            $this->copyDirectory("{$this->path['contents']}/article", "{$to}/article");
-        }
-        $maker      = $this->getMaker();
-        $twig       = new \Twig_Environment(new \Twig_Loader_Filesystem("{$this->path['theme']}/template"));
-        $template   = $twig->loadTemplate('article.twig');
-        $article    = $maker->getNewestArticle()[0];
-        for($i = 0; $i < count($this->article_list); $i++) {
-            $html = $template->render(array(
-                'maker' => $maker,
-                'article' => $article
-            ));
-            file_put_contents("{$to}{$article->link}/index.html", $html);
-            $article = $maker->getNextArticle($article)[0];
-        }
-    }
-
-    private function makeIndex(string $url, string $to)
-    {
-        $maker      = $this->getMaker();
-        $twig       = new \Twig_Environment(new \Twig_Loader_Filesystem("{$this->path['theme']}/template"));
-        $template   = $twig->loadTemplate('index.twig');
-        $html = $template->render(array(
-            'maker' => $maker
-        ));
-        file_put_contents("{$to}/index.html", $html);
-    }
-
-    private function makeArticlesPage(string $url, string $to)
-    {
-        $maker      = $this->getMaker();
-        $twig       = new \Twig_Environment(new \Twig_Loader_Filesystem("{$this->path['theme']}/template"));
-        $template   = $twig->loadTemplate('articles.twig');
-        $noapp      = $this->theme_config->noapp ?? 10;
-        $noapp      = (is_int($noapp) && $noapp > 0) ? $noapp : 10;
-        for ($i = 1, $j = count($this->article_list); $j > 0; $j = $j - $noapp, $i++) {
-            mkdir("{$to}/page/{$i}", 0700, true);
-            $articles   = null;
-            $infos      = array_slice($this->article_list, ($i-1)*$noapp, $noapp);
-            foreach($infos as $info) {
-                $articles[] = new Article($info);
-            }
-            $html = $template->render(array(
-                'maker'     =>  $maker,
-                'articles'  =>  $articles,
-                'prev_page' =>  ($i != 1) ? '/page/'.(string)($i-1) : null,
-                'next_page' =>  ($j - $noapp > 0) ? '/page/'.(string)($i+1) : null
-            ));
-            file_put_contents("{$to}/page/{$i}/index.html", $html);
-        }
-    }
-
-    private function makeTagPage(string $url, string $to)
-    {
-        $maker      = $this->getMaker();
-        $twig       = new \Twig_Environment(new \Twig_Loader_Filesystem("{$this->path['theme']}/template"));
-        $template   = $twig->loadTemplate('tags.twig');
-        $html = $template->render(array(
-            'maker'     =>  $maker
-        ));
-        mkdir("{$to}/tag", 0700, true);
-        file_put_contents("{$to}/tag/index.html", $html);
-        $template   = $twig->loadTemplate('articles.twig');
-        $noapp      = $this->theme_config->noapp ?? 10;
-        $noapp      = (is_int($noapp) && $noapp > 0) ? $noapp : 10;
-        foreach ($this->tag_list as $tag => $tag_ids) {
-            for ($i = 1; count($tag_ids) > 0; $i++) {
-                $articles   = [];
-                $ids        = [];
-                for ($j = 0; $j < $noapp; $j++) {
-                    if (($id = array_shift($tag_ids)) === null) {
-                        break;
-                    }
-                    $ids[] = $id;
-                }
-                foreach ($ids as $id) {
-                    $articles[] = new Article($this->article_list[$id]);
-                }
-                $html = $template->render(array(
-                    'maker'     =>  $maker,
-                    'articles'  =>  $articles,
-                    'prev_page' =>  ($i != 1)               ? "/tag/{$tag}/".(string)($i-1) : null,
-                    'next_page' =>  (count($tag_ids) > 0)   ? "/tag/{$tag}/".(string)($i+1) : null
-                ));
-                mkdir("{$to}/tag/{$tag}/{$i}", 0700, true);
-                if ($i === 1) {
-                    file_put_contents("{$to}/tag/{$tag}/index.html", $html);
-                }
-                file_put_contents("{$to}/tag/{$tag}/{$i}/index.html", $html);
-            }
-        }
-    }
-
-    private function copyTheme(string $to)
-    {
-        if (is_dir("{$this->path['theme']}/css")) {
-            $this->copyDirectory("{$this->path['theme']}/css", "{$to}/css");
-        }
-        if (is_dir("{$this->path['theme']}/js")) {
-            $this->copyDirectory("{$this->path['theme']}/js", "{$to}/js");
-        }
-        if (is_dir("{$this->path['theme']}/img")) {
-            $this->copyDirectory("{$this->path['theme']}/img", "{$to}/img");
-        }
-    }
-
-    private function cacheArticle()
-    {
-        if (!is_dir($this->path['cache'])) {
-            mkdir($this->path['cache'], 0700);
-        }
-        foreach ($this->article_list as $article) {
-            if (!is_dir("{$this->path['cache']}{$article->link}")) {
-                mkdir("{$this->path['cache']}{$article->link}", 0700, true);
-            }
-            file_put_contents(
-                "{$this->path['cache']}{$article->link}/article.md",
-                $this->rewriteImagePath("{$article->path}/article.md", $article->link)
-            );
-        }
-    }
-
-    /**
-     * @param  string $file
-     * @param  string $path
-     * @return string
-     */
-    private function rewriteImagePath(string $file, string $path)
-    {
-        return preg_replace(
-            '/\!\[.*\]\(([a-zA-Z0-9\-_\/]+\.[a-zA-Z]+)(\s+\"\w*\"|)\)/',
-            '![]('. $path .'/${1}${2})',
-            file_get_contents($file)
-        );
-    }
-
-    /**
-     * @return Maker
-     */
-    private function getMaker()
-    {
-        return new Maker(
-            $this->config,
-            $this->article_list,
-            $this->path['contents'],
-            $this->theme_config,
-            $this->tag_list
-        );
-    }
-
-    private function makeFeedPage(string $url, string $path)
-    {
-        $type = $this->config->feed->type ?? self::DEFAULT_FEED_TYPE;
-        if ($type === 'atom') {
-            $this->makeAtomFeed($url, $path);
-        } else {
-            throw new \Exception("Uknown feed type");
-        }
-    }
-
-    private function makeAtomFeed(string $url, string $path)
-    {
-        $atom = new ATOM;
-        $atom->setTitle((string)$this->config->title);
-        $atom->setLink($url);
-        $atom->setDate(new \DateTime());
-        $number = $this->config->feed->number ?? self::DEFAULT_FEED_NUMBER;
-        $number = is_int($number) && $number > 0 ? $number : self::DEFAULT_FEED_TYPE;
-        for ($i = 0 ; $i < $number && $i < count($this->article_list); $i++) {
-            $article = new Article($this->article_list[$i]);
-            $item = $atom->createNewItem() ;
-            $item->setAuthor((string)($this->config->author));
-            $item->setTitle($article->title);
-            $item->setLink($article->link);
-            $item->setDate($article->timestamp);
-            $item->setDescription($article->html);
-            $atom->addItem($item);
-        }
-        mkdir("{$path}/feed", 0700, true);
-        file_put_contents("{$path}/feed.atom", $atom->generateFeed());
     }
 }
