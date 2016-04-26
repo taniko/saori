@@ -1,0 +1,16 @@
+{
+    "id": "username",
+    "local": "http://localhost:8000",
+    "title": "Example Blog",
+    "author": "John Doe",
+    "theme": "sample",
+    "lang": "en",
+    "link": {
+        "github": "https://github.com",
+        "twitter": "https://twitter.com"
+    },
+    "feed": {
+        "type": "atom",
+        "number": 50
+    }
+}

@@ -2,6 +2,7 @@
 namespace hrgruri\saori;
 
 use hrgruri\saori\{ArticleInfo, Article};
+use hrgruri\saori\exception\GeneratorException;
 use cebe\markdown\GithubMarkdown;
 
 class Maker
@@ -98,15 +99,20 @@ class Maker
     }
 
     /**
-     * @param  string $path path of markdown file
-     * @return string HTML
+     * @param   string  $path   path of markdown file
+     * @param   bool    $flag   throw flag
+     * @return  string HTML
      */
-    private function getHtml(string $path)
+    private function getHtml(string $path, bool $flag = true)
     {
-        if (!file_exists($path)) {
-            throw new \Exception("not found {$path}");
+        if (file_exists($path)) {
+            $result = (new GithubMarkdown)->parse(file_get_contents($path));
+        } elseif ($flag) {
+            throw new GeneratorException("not exists {$path}");
+        } else {
+            $result = null;
         }
-        return (new GithubMarkdown)->parse(file_get_contents($path));
+        return $result;
     }
 
     /**
@@ -128,20 +134,6 @@ class Maker
     public function countArticle()
     {
         return count($this->article_list);
-    }
-
-    /**
-     * @param  string   $name file name
-     * @param  bool     $flag
-     * @return null | string
-     */
-    public function loadMarkdown(string $name, bool $flag = true)
-    {
-        $html = null;
-        if (file_exists("{$this->contents_path}/markdown/{$name}")) {
-            $html = $this->getHtml("{$this->contents_path}/markdown/{$name}");
-        }
-        return $html;
     }
 
     public function getTagList()
@@ -166,5 +158,25 @@ class Maker
             }
         }
         return $articles;
+    }
+
+    public function requireHtml(string $filename, bool $flag = true)
+    {
+        return $this->getHtml("{$this->contents_path}/markdown/{$filename}", $flag);
+    }
+
+    public function requirePageHtml(string $filename, bool $flag = true)
+    {
+        return $this->getHtml("{$this->contents_path}/page/{$filename}", $flag);
+    }
+
+    public function existsMarkdown(string $filename)
+    {
+        return file_exists("{$this->contents_path}/markdown/{$filename}");
+    }
+
+    public function existsPageMarkdown(string $filename)
+    {
+        return file_exists("{$this->contents_path}/page/{$filename}");
     }
 }

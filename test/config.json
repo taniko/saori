@@ -11,6 +11,6 @@
     },
     "feed" : {
         "type" : "atom",
-        "number": 30
+        "number": 50
     }
 }

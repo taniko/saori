@@ -22,9 +22,9 @@
                 </div>
                 <div id="blog-side" class="col-xs-12 col-md-3 col-md-offset-1">
                     {% block side_block %}
-                        {% if not maker.loadMarkdown('profile.md') is empty %}
+                        {% if not maker.existsMarkdown('profile.md') is empty %}
                             {% autoescape false %}
-                                {{ maker.loadMarkdown('profile.md')}}
+                                {{ maker.requireHtml('profile.md')}}
                             {% endautoescape %}
                         {% endif %}
                     {% endblock %}

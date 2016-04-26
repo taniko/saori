@@ -303,7 +303,7 @@ class SiteGenerator
         if (!is_dir($to)) {
             mkdir($to, 0700, true);
         }
-        if ($dh = opendir($from)) {
+        if (is_dir($from) && ($dh = opendir($from))) {
             while (($file = readdir($dh)) !== false) {
                 if ($file === '.' || $file === '..') {
                     continue;
