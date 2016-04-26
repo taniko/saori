@@ -203,8 +203,8 @@ class SiteGenerator
         });
         $i = 0;
         foreach ($articles as $article) {
-            $article->newer_link = isset($result[$i - 1]) ? $result[$i - 1]->link : null;
-            $article->older_link = isset($result[$i + 1]) ? $result[$i + 1]->link : null;
+            $article->newer_link = isset($articles[$i - 1]) ? $articles[$i - 1]->link : null;
+            $article->older_link = isset($articles[$i + 1]) ? $articles[$i + 1]->link : null;
             $article->id = $i++;
             sort($article->tag, SORT_NATURAL);
             foreach($article->tag as $tag) {
