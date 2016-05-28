@@ -17,6 +17,7 @@ class SiteGenerator
     private $config;
     private $theme_config;
     private $article_list;
+    private $twig;
 
     public function __construct(array $path, \stdClass $config, \stdClass $tc)
     {
@@ -25,6 +26,9 @@ class SiteGenerator
         $this->theme_config =   $tc;
         $this->article_list =   $this->getArticleList();
         $this->cacheArticle();
+        $this->twig         = new \Twig_Environment(
+            new \Twig_Loader_Filesystem("{$this->path['theme']}/twig")
+        );
     }
 
     public function generate(string $url, string $to)
@@ -41,8 +45,7 @@ class SiteGenerator
     private function generateIndex()
     {
         $maker = $this->getMaker();
-        $twig       = $this->getTwigEnvironment();
-        $template   = $twig->loadTemplate('generate/index.twig');
+        $template   = $this->twig->loadTemplate('template/index.twig');
         $html = $template->render(array(
             'maker' => $maker
         ));
@@ -55,7 +58,7 @@ class SiteGenerator
         $maker      = $this->getMaker();
         $twig       = $this->getTwigEnvironment();
         /*  generate each article page  */
-        $template   = $twig->loadTemplate('generate/article.twig');
+        $template   = $this->twig->loadTemplate('template/article.twig');
         $tmp        = $maker->getNewestArticle();
         if (!isset($tmp[0])) {
             return;
@@ -70,7 +73,7 @@ class SiteGenerator
             $article = $maker->getNextArticle($article)[0];
         }
         /*  generate articles page  */
-        $template   = $twig->loadTemplate('generate/articles.twig');
+        $template   = $this->twig->loadTemplate('template/articles.twig');
         $noapp      = $this->theme_config->noapp ?? self::NOAPP;
         $noapp      = (is_int($noapp) && $noapp > 0) ? $noapp : self::NOAPP_NOAPP;
         for ($i = 1, $j = count($this->article_list); $j > 0; $j = $j - $noapp, $i++) {
@@ -94,13 +97,13 @@ class SiteGenerator
     {
         $maker      = $this->getMaker();
         $twig       = $this->getTwigEnvironment();
-        $template   = $twig->loadTemplate('generate/tags.twig');
+        $template   = $this->twig->loadTemplate('template/tags.twig');
         $html = $template->render(array(
             'maker'     =>  $maker
         ));
         mkdir("{$this->root}/tag", 0700, true);
         file_put_contents("{$this->root}/tag/index.html", $html);
-        $template   = $twig->loadTemplate('generate/articles.twig');
+        $template   = $this->twig->loadTemplate('template/articles.twig');
         $noapp      = $this->theme_config->noapp ?? self::NOAPP;
         $noapp      = (is_int($noapp) && $noapp > 0) ? $noapp : self::NOAPP;
         foreach ($this->tag_list as $tag => $tag_ids) {
