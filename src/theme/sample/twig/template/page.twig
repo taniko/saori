@@ -1,0 +1,9 @@
+{% extends "base/main.twig" %}
+
+{% block main_block %}
+    <div id="page-contents">
+        {% autoescape false %}
+            {{page_contents}}
+        {% endautoescape %}
+    </div>
+{% endblock %}

@@ -3,14 +3,17 @@ namespace hrgruri\saori;
 
 use hrgruri\saori\{ArticleInfo, Maker};
 use hrgruri\saori\exception\GeneratorException;
+use hrgruri\saori\generator\{
+    IndexGenerator,
+    UserPageGenerator,
+    ArticleGenerator,
+    TagPageGenerator,
+    FeedGenerator
+};
 use cebe\markdown\GithubMarkdown;
-use FeedWriter\{Item, ATOM, Feed};
 
 class SiteGenerator
 {
-    const NOAPP         =   10;
-    const FEED_TYPE     =   'atom';
-    const FEED_NUMBER   =   100;
     private $root;
     private $url;
     private $path;
@@ -35,125 +38,22 @@ class SiteGenerator
     {
         $this->url  = rtrim($url, '/');
         $this->root = rtrim($to, '/');
+        $this->path['root'] = $this->root;
         $this->copyTheme();
-        $this->generateIndex();
-        $this->generateArticlePage();
-        $this->generateTagPage();
-        $this->generateAtomFeed();
-    }
-
-    private function generateIndex()
-    {
-        $maker = $this->getMaker();
-        $template   = $this->twig->loadTemplate('template/index.twig');
-        $html = $template->render(array(
-            'maker' => $maker
-        ));
-        file_put_contents("{$this->root}/index.html", $html);
-    }
-
-    private function generateArticlePage()
-    {
-        $this->copyDirectory($this->path['article'], "{$this->root}/article");
-        $maker      = $this->getMaker();
-        $twig       = $this->getTwigEnvironment();
-        /*  generate each article page  */
-        $template   = $this->twig->loadTemplate('template/article.twig');
-        $tmp        = $maker->getNewestArticle();
-        if (!isset($tmp[0])) {
-            return;
-        }
-        $article    = $tmp[0];
-        for($i = 0; $i < count($this->article_list); $i++) {
-            $html = $template->render(array(
-                'maker' => $maker,
-                'article' => $article
-            ));
-            file_put_contents("{$this->root}/{$article->link}/index.html", $html);
-            $article = $maker->getNextArticle($article)[0];
-        }
-        /*  generate articles page  */
-        $template   = $this->twig->loadTemplate('template/articles.twig');
-        $noapp      = $this->theme_config->noapp ?? self::NOAPP;
-        $noapp      = (is_int($noapp) && $noapp > 0) ? $noapp : self::NOAPP_NOAPP;
-        for ($i = 1, $j = count($this->article_list); $j > 0; $j = $j - $noapp, $i++) {
-            mkdir("{$this->root}/page/{$i}", 0700, true);
-            $articles   = null;
-            $infos      = array_slice($this->article_list, ($i-1)*$noapp, $noapp);
-            foreach($infos as $info) {
-                $articles[] = new Article($info);
-            }
-            $html = $template->render(array(
-                'maker'     =>  $maker,
-                'articles'  =>  $articles,
-                'prev_page' =>  ($i != 1) ? '/page/'.(string)($i-1) : null,
-                'next_page' =>  ($j - $noapp > 0) ? '/page/'.(string)($i+1) : null
-            ));
-            file_put_contents("{$this->root}/page/{$i}/index.html", $html);
-        }
-    }
-
-    private function generateTagPage()
-    {
-        $maker      = $this->getMaker();
-        $twig       = $this->getTwigEnvironment();
-        $template   = $this->twig->loadTemplate('template/tags.twig');
-        $html = $template->render(array(
-            'maker'     =>  $maker
-        ));
-        mkdir("{$this->root}/tag", 0700, true);
-        file_put_contents("{$this->root}/tag/index.html", $html);
-        $template   = $this->twig->loadTemplate('template/articles.twig');
-        $noapp      = $this->theme_config->noapp ?? self::NOAPP;
-        $noapp      = (is_int($noapp) && $noapp > 0) ? $noapp : self::NOAPP;
-        foreach ($this->tag_list as $tag => $tag_ids) {
-            for ($i = 1; count($tag_ids) > 0; $i++) {
-                $articles   = [];
-                $ids        = [];
-                for ($j = 0; $j < $noapp; $j++) {
-                    if (($id = array_shift($tag_ids)) === null) {
-                        break;
-                    }
-                    $ids[] = $id;
-                }
-                foreach ($ids as $id) {
-                    $articles[] = new Article($this->article_list[$id]);
-                }
-                $html = $template->render(array(
-                    'maker'     =>  $maker,
-                    'articles'  =>  $articles,
-                    'prev_page' =>  ($i != 1)               ? "/tag/{$tag}/".(string)($i-1) : null,
-                    'next_page' =>  (count($tag_ids) > 0)   ? "/tag/{$tag}/".(string)($i+1) : null
-                ));
-                mkdir("{$this->root}/tag/{$tag}/{$i}", 0700, true);
-                if ($i === 1) {
-                    file_put_contents("{$this->root}/tag/{$tag}/index.html", $html);
-                }
-                file_put_contents("{$this->root}/tag/{$tag}/{$i}/index.html", $html);
-            }
-        }
-    }
-
-    private function generateAtomFeed()
-    {
-        $atom = new ATOM;
-        $atom->setTitle((string)$this->config->title);
-        $atom->setLink($this->url);
-        $atom->setDate(new \DateTime());
-        $number = $this->config->feed->number ?? self::FEED_NUMBER;
-        $number = is_int($number) && $number > 0 ? $number : self::FEED_TYPE;
-        for ($i = 0 ; $i < $number && $i < count($this->article_list); $i++) {
-            $article    = new Article($this->article_list[$i]);
-            $item       = $atom->createNewItem() ;
-            $item->setAuthor((string)($this->config->author));
-            $item->setTitle($article->title);
-            $item->setLink($article->link);
-            $item->setDate($article->timestamp);
-            $item->setDescription($article->html);
-            $atom->addItem($item);
-        }
-        mkdir("{$this->root}/feed", 0700, true);
-        file_put_contents("{$this->root}/feed.atom", $atom->generateFeed());
+        $env = new \hrgruri\saori\generator\Environment(
+            $this->path,
+            $this->getMaker(),
+            $this->twig,
+            $this->url,
+            $this->article_list
+        );
+        $env->theme_config  = $this->theme_config;
+        $env->tag_list      = $this->tag_list;
+        IndexGenerator::generate($env, $this->config);
+        ArticleGenerator::generate($env, $this->config);
+        TagPageGenerator::generate($env, $this->config);
+        FeedGenerator::generate($env, $this->config);
+        UserPageGenerator::generate($env, $this->config);
     }
 
     /**
@@ -167,13 +67,6 @@ class SiteGenerator
             $this->path['contents'],
             $this->theme_config,
             $this->tag_list
-        );
-    }
-
-    private function getTwigEnvironment()
-    {
-        return new \Twig_Environment(
-            new \Twig_Loader_Filesystem("{$this->path['theme']}/template")
         );
     }
 
