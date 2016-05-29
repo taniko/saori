@@ -16,8 +16,6 @@ class TagPageGenerator extends Generator
             'maker'     =>  $env->maker
         ));
         self::putContents("{$env->paths['root']}/tag/index.html", $html);
-        // mkdir("{$this->root}/tag", 0700, true);
-        // file_put_contents("{$this->root}/tag/index.html", $html);
         $template   = $env->twig->loadTemplate('template/articles.twig');
         $noapp      = $env->theme_config->noapp ?? self::NOAPP;
         $noapp      = (is_int($noapp) && $noapp > 0) ? $noapp : self::NOAPP;
@@ -40,13 +38,10 @@ class TagPageGenerator extends Generator
                     'prev_page' =>  ($i != 1)               ? "/tag/{$tag}/".(string)($i-1) : null,
                     'next_page' =>  (count($tag_ids) > 0)   ? "/tag/{$tag}/".(string)($i+1) : null
                 ));
-                // mkdir("{$env->paths['root']}/tag/{$tag}/{$i}", 0700, true);
                 if ($i === 1) {
                     self::putContents("{$env->paths['root']}/tag/{$tag}/index.html", $html);
-                    // file_put_contents("{$env->paths['root']}/tag/{$tag}/index.html", $html);
                 }
                 self::putContents("{$env->paths['root']}/tag/{$tag}/{$i}/index.html", $html);
-                // file_put_contents("{$env->paths['root']}/tag/{$tag}/{$i}/index.html", $html);
             }
         }
     }
