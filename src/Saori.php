@@ -191,7 +191,7 @@ class Saori
                 } elseif(($file === '.git' || $file === '.gitkeep') && $flag === true) {
                     continue;
                 }
-                $path = $dir . '/' . $file;
+                $path = "{$dir}/{$file}";
                 if (is_dir($path)) {
                     $this->clearDirectory($path, false);
                 }else{

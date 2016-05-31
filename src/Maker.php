@@ -63,7 +63,7 @@ class Maker
      * @param   bool    $flag   throw flag
      * @return  string HTML
      */
-    private function getHtml(string $path, bool $flag = true)
+    private function getHtml(string $path, bool $flag = false)
     {
         if (file_exists($path)) {
             $result = (new GithubMarkdown)->parse(file_get_contents($path));
@@ -120,16 +120,20 @@ class Maker
         return $articles;
     }
 
-    public function requireHtml(string $filename, bool $flag = true)
+    /**
+     * @param  string $filename
+     * @param  bool   $flag     throw flag
+     * @return string | null
+     */
+    public function requireHtml(string $filename, bool $flag = false)
     {
         return $this->getHtml("{$this->contents_path}/markdown/{$filename}", $flag);
     }
 
-    public function existsMarkdown(string $filename)
-    {
-        return file_exists("{$this->contents_path}/markdown/{$filename}");
-    }
-
+    /**
+     * @param  string $key
+     * @return mixed
+     */
     public function get(string $key)
     {
         return isset($this->config->{$key}) ? $this->config->{$key} : null;

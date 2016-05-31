@@ -11,6 +11,17 @@
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/github.min.css">
         <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script>
+        {% set ga_id = maker.get('google-analytics') %}
+        {% if ga_id is not null %}
+            <script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+              ga('create', '{{ga_id}}', 'auto');
+              ga('send', 'pageview');
+            </script>
+        {% endif %}
         <link href="/feed.atom" rel="alternate" title="atom" type="application/atom+xml">
     </head>
     <body>
@@ -24,15 +35,14 @@
                 <div id="blog-main" class="col-xs-12 col-md-8">
                     {% block main_block %}{% endblock %}
                 </div>
-                <div id="blog-side" class="col-xs-12 col-md-3 col-md-offset-1">
-                    {% block side_block %}
-                        {% if not maker.existsMarkdown('profile.md') is empty %}
-                            {% autoescape false %}
-                                {{ maker.requireHtml('profile.md')}}
-                            {% endautoescape %}
-                        {% endif %}
-                    {% endblock %}
-                </div>
+                {% set profile = maker.requireHtml('profile.md') %}
+                {% if profile is not null %}
+                    <div id="blog-side" class="col-xs-12 col-md-3 col-md-offset-1">
+                        {% autoescape false %}
+                            {{ maker.requireHtml('profile.md')}}
+                        {% endautoescape %}
+                    </div>
+                {% endif %}
             </div>
         </div>
     </body>
