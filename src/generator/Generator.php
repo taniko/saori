@@ -12,19 +12,24 @@ abstract class Generator
 
     /**
      * @param  string $path
+     * @param  array  $exts extensions
      * @return array
      */
-    protected static function getFileList(string $path) : array
+    protected static function getFileList(string $path, array $exts = null) : array
     {
         $files = [];
         if (is_dir($path) && ($dh = opendir($path))) {
             while (($file = readdir($dh)) !== false) {
-                if ($file === '.' || $file === '..') {
+                if ($file === '.' || $file === '..' || $file === '.DS_Store') {
                     continue;
                 } elseif (is_dir("{$path}/{$file}")) {
-                    $files = array_merge($files, self::getFileList("{$path}/{$file}"));
-                } else {
+                    $files = array_merge($files, self::getFileList("{$path}/{$file}", $exts));
+                } elseif (is_null($exts)) {
                     $files[] = "{$path}/{$file}";
+                } elseif (in_array(pathinfo("{$path}/{$file}", PATHINFO_EXTENSION), $exts)) {
+                    $files[] = "{$path}/{$file}";
+                } else {
+                    continue;
                 }
             }
             closedir($dh);
@@ -51,13 +56,22 @@ abstract class Generator
      * @param  string $file
      * @return string | null
      */
-    protected static function getHTML(string $file)
+    protected static function getHtml(string $file)
     {
         $html = null;
         if (file_exists($file)) {
             $html = (new GithubMarkdown)->parse(file_get_contents($file));
         }
         return $html;
+    }
+
+    /**
+     * @param  string $str
+     * @return string
+     */
+    protected static function getHtmlByString(string $str) : string
+    {
+        return (new GithubMarkdown)->parse($str);
     }
 
     protected static function copyDirectory(string $from, string $to)
@@ -89,6 +103,21 @@ abstract class Generator
                 file_put_contents($path, $contents);
             } else {
                 print "{$path} is already exists\n";
+            }
+        }
+    }
+
+    protected static function copyFile(string $from, string $to)
+    {
+        if (preg_match('/(.*)\/.*\..*$/', $to, $matched) == 1) {
+            if (!file_exists($matched[1])) {
+                mkdir($matched[1], 0700, true);
+            }
+            if (!file_exists($to)) {
+                copy($from, $to);
+
+            } else {
+                print "{$to} is already exists\n";
             }
         }
     }
