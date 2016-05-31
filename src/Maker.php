@@ -23,46 +23,6 @@ class Maker
         $this->noapp         = $this->theme_config->noapp ?? 10;
         $this->tag_list      = $tag_list;
     }
-    /**
-     * @return string
-     */
-    public function getBlogTitle()
-    {
-        return (string)$this->config->title;
-    }
-
-    /**
-     * @return null | string
-     */
-    public function getBlogDescription()
-    {
-        return isset($this->config->description) ? (string)$this->config->description : null;
-    }
-
-    /**
-    * @param  string $name link name
-    * @return null | string
-    */
-    public function getLink(string $name)
-    {
-        return isset($this->config->link->{$name}) ? (string)$this->config->link->{$name}: null;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLang()
-    {
-        return (string)$this->config->lang;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAuthor()
-    {
-        return (string)$this->config->author;
-    }
 
     /**
      * @param  integer $count
@@ -165,18 +125,13 @@ class Maker
         return $this->getHtml("{$this->contents_path}/markdown/{$filename}", $flag);
     }
 
-    public function requirePageHtml(string $filename, bool $flag = true)
-    {
-        return $this->getHtml("{$this->contents_path}/page/{$filename}", $flag);
-    }
-
     public function existsMarkdown(string $filename)
     {
         return file_exists("{$this->contents_path}/markdown/{$filename}");
     }
 
-    public function existsPageMarkdown(string $filename)
+    public function get(string $key)
     {
-        return file_exists("{$this->contents_path}/page/{$filename}");
+        return isset($this->config->{$key}) ? $this->config->{$key} : null;
     }
 }
