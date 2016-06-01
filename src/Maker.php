@@ -10,16 +10,18 @@ class Maker
     private $article_list;
     private $config;
     private $contents_path;
+    private $ut_config;
     public  $theme_config;
     public  $noapp;
     public  $tag_list;
 
-    public function __construct($config, $article_list, $path, $tc, $tag_list)
+    public function __construct($config, $article_list, $path, $tc, $ut, $tag_list)
     {
         $this->config        = $config;
         $this->article_list  = $article_list;
         $this->contents_path = $path;
         $this->theme_config  = $tc;
+        $this->ut_config     = $ut;
         $this->noapp         = $this->theme_config->noapp ?? 10;
         $this->tag_list      = $tag_list;
     }
@@ -136,6 +138,17 @@ class Maker
      */
     public function get(string $key)
     {
-        return isset($this->config->{$key}) ? $this->config->{$key} : null;
+        return $this->config->{$key} ?? null;
+    }
+
+    /**
+     * @param  string $key
+     * @return mixed
+     */
+    public function theme(string $key)
+    {
+        return $this->ut_config->{$this->config->theme}->{$key}
+            ?? $this->theme_config->{$key}
+            ?? null;
     }
 }

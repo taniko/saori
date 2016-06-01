@@ -19,14 +19,16 @@ class SiteGenerator
     private $path;
     private $config;
     private $theme_config;
+    private $ut_config;
     private $article_list;
     private $twig;
 
-    public function __construct(array $path, \stdClass $config, \stdClass $tc)
+    public function __construct(array $path, \stdClass $config, \stdClass $tc, \stdClass $ut)
     {
         $this->path         =   $path;
         $this->config       =   $config;
         $this->theme_config =   $tc;
+        $this->ut_config    =   $ut;
         $this->article_list =   $this->getArticleList();
         $this->cacheArticle();
         $this->twig         = new \Twig_Environment(
@@ -66,6 +68,7 @@ class SiteGenerator
             $this->article_list,
             $this->path['contents'],
             $this->theme_config,
+            $this->ut_config,
             $this->tag_list
         );
     }

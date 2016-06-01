@@ -14,6 +14,7 @@ class Saori
     private $root;
     private $path;
     private $theme_config;
+    private $ut_config;
 
     public function __construct(string $root)
     {
@@ -123,7 +124,8 @@ class Saori
             $generator = new SiteGenerator(
                 $this->path,
                 $this->config,
-                $this->theme_config
+                $this->theme_config,
+                $this->ut_config
             );
             $generator->generate(
                 $this->config->local,
@@ -173,6 +175,12 @@ class Saori
             $this->theme_config = ($tc instanceof \stdClass) ? $tc : new \stdClass;
         } else {
             $this->theme_config = new \stdClass;
+        }
+        if (file_exists("{$this->path['contents']}/theme.json")) {
+            $tc = json_decode(file_get_contents("{$this->path['contents']}/theme.json"));
+            $this->ut_config = ($tc instanceof \stdClass) ? $tc : new \stdClass;
+        } else {
+            $this->ut_config = new \stdClass;
         }
         $this->path['public']   =   "{$this->root}/{$config->id}.github.io";
         $this->path['theme']    =   __DIR__."/theme/{$config->theme}";
