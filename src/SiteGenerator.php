@@ -42,6 +42,10 @@ class SiteGenerator
         $this->root = rtrim($to, '/');
         $this->path['root'] = $this->root;
         $this->copyTheme();
+        // rewrite path
+        foreach ($this->article_list as &$article) {
+            $article->path = "{$this->path['cache']}{$article->link}";
+        }
         $env = new \hrgruri\saori\generator\Environment(
             $this->path,
             $this->getMaker(),
