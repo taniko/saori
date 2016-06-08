@@ -151,4 +151,15 @@ class Maker
             ?? $this->theme_config->{$key}
             ?? null;
     }
+
+    /**
+     * @param  string $key
+     * @return mixed
+     */
+    public function color(string $key)
+    {
+        return $this->ut_config->{$this->config->theme}->color->{$key}
+            ?? $this->theme_config->color->{$key}
+            ?? null;
+    }
 }

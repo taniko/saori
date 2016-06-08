@@ -1,4 +1,10 @@
 {
     "noapp":5,
-    "header-color" : "#9effff"
+    "color" : {
+        "body"      : "white",
+        "blog-side" : "#91D0EF",
+        "header"    : "#9EFFFF",
+        "article"   : "#FFF1CF",
+        "page-contents" : "#FFF1CF"
+    }
 }

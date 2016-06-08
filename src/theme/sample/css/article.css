@@ -1,5 +1,4 @@
 .blog-article {
-    background: #fff1cf;
     margin-bottom: 25px;
     padding-left: 5px;
     padding-right: 5px;
@@ -43,4 +42,17 @@
 
 .blog-article-tags li:first-child {
     border-left: none;
+}
+
+.blog-article table {
+    border-width: 1px 0px 0px 1px;
+    border-color: #888;
+    border-style: solid;
+}
+
+.blog-article table td, .blog-article table th {
+    border-width: 0px 1px 1px 0px;
+    border-color: #888;
+    border-style: solid;
+    padding: 10px;
 }

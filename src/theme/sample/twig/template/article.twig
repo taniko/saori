@@ -1,7 +1,7 @@
 {% extends "base/main.twig" %}
 
 {% block main_block %}
-    <div class="blog-article">
+    <div class="blog-article" style="background-color: {{maker.color('article')}};">
         <h1 class="blog-article-title"><a href="{{article.link}}">{{article.title}}</a></h1>
         <div class="blog-article-meta">{{article.getDate}}</div>
         <div class="blog-article-contents">

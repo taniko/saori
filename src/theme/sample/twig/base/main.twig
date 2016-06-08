@@ -24,8 +24,8 @@
         {% endif %}
         <link href="/feed.atom" rel="alternate" title="atom" type="application/atom+xml">
     </head>
-    <body>
-        <div id="blog-header" style="background: {{maker.theme('header-color')}};">
+    <body style="background-color: {{maker.color('body')}};">
+        <div id="blog-header" style="background: {{maker.color('header')}};">
             <div class="container">
                 <h1 id="blog-title"><a href="/">{{maker.get('title')}}</a></h1>
             </div>
@@ -37,7 +37,10 @@
                 </div>
                 {% set profile = maker.requireHtml('profile.md') %}
                 {% if profile is not null %}
-                    <div id="blog-side" class="col-xs-12 col-md-3 col-md-offset-1">
+                    <div id="blog-side"
+                        class="col-xs-12 col-md-3 col-md-offset-1"
+                        style="background-color: {{maker.color('blog-side')}};"
+                    >
                         {% autoescape false %}
                             {{ maker.requireHtml('profile.md')}}
                         {% endautoescape %}
