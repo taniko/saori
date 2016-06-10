@@ -19,11 +19,13 @@
         {% endif %}
     </div>
     <ul class = "pager">
-        {% if not article.newer_link is empty %}
-            <li class = "newer_link"><a href = "{{article.newer_link}}">&larr; Newer</a></li>
+        {% set newer_link = article.newer_link %}
+        {% if not newer_link is empty %}
+            <li class = "newer_link"><a href = "{{newer_link}}">&larr; Newer</a></li>
         {% endif %}
-        {% if not article.older_link is empty %}
-            <li class = "older_link"><a href = "{{article.older_link}}">Older &rarr;</a></li>
+        {% set older_link = article.older_link %}
+        {% if not older_link is empty %}
+            <li class = "older_link"><a href = "{{older_link}}">Older &rarr;</a></li>
         {% endif %}
     </ul>
 {% endblock %}

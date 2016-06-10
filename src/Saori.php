@@ -1,15 +1,13 @@
 <?php
 namespace hrgruri\saori;
 
-use hrgruri\saori\{ArticleInfo, Maker, SiteGenerator};
+use hrgruri\saori\SiteGenerator;
 use hrgruri\saori\exception\{GeneratorException, ConfigException};
-use cebe\markdown\GithubMarkdown;
-use \FeedWriter\{Item, ATOM, Feed};
 
 class Saori
 {
     const SAORI_COMMAND =   ['init', 'post', 'make'];
-    const CONFIG_LIST   =   ['id', 'local', 'title', 'author', 'theme', 'lang', 'link', 'feed'];
+    const CONFIG_LIST   =   ['id', 'local', 'title', 'author', 'theme', 'lang', 'link'];
     private $config;
     private $root;
     private $path;

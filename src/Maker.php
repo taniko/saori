@@ -1,7 +1,7 @@
 <?php
 namespace hrgruri\saori;
 
-use hrgruri\saori\{ArticleInfo, Article};
+use hrgruri\saori\Article;
 use hrgruri\saori\exception\GeneratorException;
 use cebe\markdown\GithubMarkdown;
 
