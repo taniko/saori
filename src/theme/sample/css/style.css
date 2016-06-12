@@ -50,4 +50,9 @@ body {
     margin-bottom: 25px;
     padding-left: 5px;
     padding-right: 5px;
+    padding-bottom: 5px;
+}
+
+#page-contents img{
+    width: 100%;
 }
