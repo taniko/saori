@@ -45,4 +45,16 @@ class TagPageGenerator extends Generator
             }
         }
     }
+
+    public static function getTagList(array $articles) : array
+    {
+        $tags = [];
+        foreach ($articles as $article) {
+            foreach ($article->tags as $tag) {
+                $tags[$tag][] = $article->getId();
+            }
+        }
+        ksort($tags, SORT_NATURAL);
+        return $tags;
+    }
 }

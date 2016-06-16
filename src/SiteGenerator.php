@@ -44,7 +44,7 @@ class SiteGenerator
         if (!isset(self::$articles)) {
             ArticleGenerator::cacheArticle($this->path);
             self::$articles = ArticleGenerator::getArticles($this->path);
-            self::$tag_list = $this->getTagList(self::$articles);
+            self::$tag_list = TagPageGenerator::getTagList(self::$articles);
             $flag = true;
         }
         $env = new \hrgruri\saori\generator\Environment(
@@ -124,17 +124,5 @@ class SiteGenerator
             }
             closedir($dh);
         }
-    }
-
-    private function getTagList(array $articles) : array
-    {
-        $tags = [];
-        foreach ($articles as $article) {
-            foreach ($article->tags as $tag) {
-                $tags[$tag][] = $article->getId();
-            }
-        }
-        ksort($tags, SORT_NATURAL);
-        return $tags;
     }
 }
