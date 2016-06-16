@@ -30,7 +30,7 @@ class TagPageGenerator extends Generator
                     $ids[] = $id;
                 }
                 foreach ($ids as $id) {
-                    $articles[] = new Article($env->articles[$id]);
+                    $articles[] = $env->articles[$id];
                 }
                 $html = $template->render(array(
                     'maker'     =>  $env->maker,

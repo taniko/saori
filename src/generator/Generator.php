@@ -121,4 +121,13 @@ abstract class Generator
             }
         }
     }
+
+    protected static function rewriteImagePath(string $file, string $path)
+    {
+        return preg_replace(
+            '/\!\[.*\]\(([a-zA-Z0-9\-_\/]+\.[a-zA-Z]+)(\s+\"\w*\"|)\)/',
+            '![]('. $path .'/${1}${2})',
+            file_get_contents($file)
+        );
+    }
 }

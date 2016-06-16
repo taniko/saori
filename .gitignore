@@ -2,6 +2,3 @@ composer.phar
 composer.lock
 /vendor/
 !.gitkeep
-/test/cache/
-/test/local/*
-/test/*.github.io/*

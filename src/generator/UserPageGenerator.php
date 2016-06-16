@@ -45,7 +45,7 @@ class UserPageGenerator extends Generator
         }
     }
 
-    private static function rewriteImagePath(string $file, string $path_page) : string
+    protected static function rewriteImagePath(string $file, string $path_page) : string
     {
         return preg_replace(
             '/\!\[.*\]\(([a-zA-Z0-9\-_\/]+\.[a-zA-Z]+)(\s+\"\w*\"|)\)/',

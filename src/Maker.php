@@ -37,7 +37,7 @@ class Maker
         $limit  = (count($this->article_list) < $count) ? count($this->article_list) : $count;
         $from   = strlen($this->contents_path);
         for ($i = 0; $i < $limit ; $i++) {
-            $articles[] = new Article($this->article_list[$i]);
+            $articles[] = $this->article_list[$i];
         }
         return $articles;
     }
@@ -45,19 +45,21 @@ class Maker
     /**
      * @param  Article  $article
      * @param  integer  $number
-     * @return null | array of Article
+     * @return array
      */
-    public function getNextArticle(Article $article, int $number = 1)
+    public function getNextArticle(Article $article, int $number = 1) : array
     {
-        $id     = $article->getId();
-        $result = null;
-        $number  = $number > 0 ? $number : 1;
-        $limit  = $id + $number < count($this->article_list) ? $id + $number + 1 : count($this->article_list);
-        $from   = strlen($this->contents_path);
+        $articles   = [];
+        $id         = $article->getId();
+        $number     = $number > 0 ? $number : 1;
+        $limit      =
+            $id + $number < count($this->article_list) ?
+            $id + $number + 1
+            : count($this->article_list);
         for ($i = $id + 1; $i < $limit; $i++) {
-            $result[] = new Article($this->article_list[$i]);
+            $articles[] = $this->article_list[$i];
         }
-        return $result;
+        return $articles;
     }
 
     /**
@@ -116,7 +118,7 @@ class Maker
         if (isset($this->tag_list[$tag])) {
             $number = count($this->tag_list[$tag]) < $number ? count($this->tag_list[$tag]) : $number;
             for ($i = 0; $i < $number; $i++) {
-                $articles[] = new Article($this->article_list[$this->tag_list[$tag][$i]]);
+                $articles[] = $this->article_list[$this->tag_list[$tag][$i]];
             }
         }
         return $articles;

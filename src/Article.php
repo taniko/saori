@@ -1,30 +1,29 @@
 <?php
 namespace hrgruri\saori;
 
-use hrgruri\saori\ArticleInfo;
 use cebe\markdown\GithubMarkdown;
 
 class Article
 {
     private $id;
+    private $cache;
+    private $timestamp;
     public $title;
-    public $tags;
-    public $html;
-    public $timestamp;
     public $link;
     public $newer_link;
     public $older_link;
+    public $tags;
 
-    public function __construct(ArticleInfo $info)
+    public function __construct(int $id, \stdClass $config, array $paths)
     {
-        $this->id           =   $info->id;
-        $this->title        =   $info->title;
-        $this->tags         =   $info->tag;
-        $this->html         =   (new GithubMarkdown)->parse(file_get_contents("{$info->path}/article.md"));
-        $this->timestamp    =   $info->timestamp;
-        $this->link         =   $info->link;
-        $this->newer_link   =   $info->newer_link;
-        $this->older_link   =   $info->older_link;
+        $this->id           = $id;
+        $this->title        = $config->title;
+        $this->tags         = $config->tag ?? [];
+        $this->timestamp    = $config->timestamp;
+        $this->cache        = $paths['cache'];
+        $this->link         = $paths['link'];
+        $this->newer_link   = $paths['newer'];
+        $this->older_link   = $paths['older'];
     }
 
     /**
@@ -37,14 +36,22 @@ class Article
     }
 
     /**
+     * @return int
+     */
+    public function getTimestamp()
+    {
+        return $this->timestamp;
+    }
+
+    /**
      * @param  int $length
      * @return string
      */
     public function striptags(int $length = null){
         if (is_int($length) && $length > 0) {
-            $result = mb_substr(strip_tags($this->html), 0, $length);
+            $result = mb_substr(strip_tags($this->html()), 0, $length);
         } else {
-            $result = strip_tags($this->html);
+            $result = strip_tags($this->html());
         }
         return $result;
     }
@@ -54,9 +61,17 @@ class Article
         return date($format, $this->timestamp);
     }
 
+    /**
+     * @return array
+     */
     public function getTags()
     {
         ksort($this->tags);
         return $this->tags;
+    }
+
+    public function html()
+    {
+        return  (new GithubMarkdown)->parse(file_get_contents("{$this->cache}/article.md"));
     }
 }
