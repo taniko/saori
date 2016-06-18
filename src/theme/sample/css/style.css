@@ -54,5 +54,5 @@ body {
 }
 
 #page-contents img{
-    width: 100%;
+    max-width: 100%;
 }
