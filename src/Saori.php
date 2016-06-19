@@ -136,7 +136,7 @@ class Saori
         } catch (ConfigException $e) {
             print "CONFIG EXCEPTION\n{$e->getMessage()}\n";
         } catch (GeneratorException $e) {
-            print "GENERATOR EXCEPTION\n";
+            print "GENERATOR EXCEPTION\n{$e->getMessage()}\n";
             $this->clearDirectory($this->path['local'], true);
             $this->clearDirectory($this->path['public'], true);
         } catch (\Twig_Error_Runtime $e) {

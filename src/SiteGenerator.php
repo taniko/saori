@@ -8,7 +8,8 @@ use hrgruri\saori\generator\{
     UserPageGenerator,
     ArticleGenerator,
     TagPageGenerator,
-    FeedGenerator
+    FeedGenerator,
+    ThemePageGenerator
 };
 use cebe\markdown\GithubMarkdown;
 
@@ -61,6 +62,7 @@ class SiteGenerator
         TagPageGenerator::generate($env, $this->config);
         FeedGenerator::generate($env, $this->config);
         UserPageGenerator::generate($env, $this->config);
+        ThemePageGenerator::generate($env, $this->config);
     }
 
     /**
