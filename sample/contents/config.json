@@ -13,7 +13,7 @@
         "type": "atom",
         "number": 50
     },
-    "share": {
+    "share": [
         "twitter"
-    }
+    ]
 }
