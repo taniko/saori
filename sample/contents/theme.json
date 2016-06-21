@@ -1,5 +1,7 @@
 {
     "sample" : {
-        "header-color" : "#99FF99"
+        "color" : {
+            "header" : "#9EFFFF"
+        }
     }
 }
