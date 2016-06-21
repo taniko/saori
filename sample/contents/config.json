@@ -12,5 +12,8 @@
     "feed": {
         "type": "atom",
         "number": 50
+    },
+    "share": {
+        "twitter"
     }
 }
