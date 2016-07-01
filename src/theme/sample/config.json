@@ -5,6 +5,7 @@
         "blog-side" : "#91D0EF",
         "header"    : "#9EFFFF",
         "article"   : "#FFF1CF",
-        "page-contents" : "#FFF1CF"
+        "page-contents" : "#FFF1CF",
+        "blog_recent": "#91D0EF"
     }
 }

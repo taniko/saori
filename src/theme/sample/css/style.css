@@ -46,6 +46,38 @@ body {
     padding-top: 5px;
 }
 
+#blog_recent {
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+ul#recent_list {
+    padding-top: 10px;
+    margin-left: 0px;
+    padding-left: 0px;
+}
+
+#recent_list li {
+    margin-left: 0px;
+    padding: 10px 0px 10px 10px;
+    border-top:  1px dotted black;
+    list-style-type: none;
+}
+
+#recent_list li:last-child{
+    padding: 10px 0px 0px 10px;
+}
+
+#recent_list li a {
+    color:#000000;
+    text-decoration:none;
+}
+
+#recent_list li a:hover{
+    color:#000000;
+    text-decoration:underline;
+}
+
 #page-contents {
     margin-bottom: 25px;
     padding-left: 5px;
