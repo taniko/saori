@@ -24,20 +24,20 @@ body {
 }
 
 /*  pager setting   */
-.pager .prev_link a {
+.pager .prev-link a {
     margin-left: 10px;
     float: left;
 }
-.pager .next_link a {
+.pager .next-link a {
     margin-right: 10px;
     float: right;
 }
 
-.pager .newer_link a {
+.pager .newer-link a {
     margin-left: 10px;
     float: left;
 }
-.pager .older_link a {
+.pager .older-link a {
     margin-right: 10px;
     float: right;
 }
@@ -46,34 +46,34 @@ body {
     padding-top: 5px;
 }
 
-#blog_recent {
+#blog-recent {
     margin-top: 10px;
     padding-top: 10px;
 }
 
-ul#recent_list {
+ul#recent-list {
     padding-top: 10px;
     margin-left: 0px;
     padding-left: 0px;
 }
 
-#recent_list li {
+#recent-list li {
     margin-left: 0px;
     padding: 10px 0px 10px 10px;
     border-top:  1px dotted black;
     list-style-type: none;
 }
 
-#recent_list li:last-child{
+#recent-list li:last-child{
     padding: 10px 0px 0px 10px;
 }
 
-#recent_list li a {
+#recent-list li a {
     color:#000000;
     text-decoration:none;
 }
 
-#recent_list li a:hover{
+#recent-list li a:hover{
     color:#000000;
     text-decoration:underline;
 }

@@ -6,10 +6,10 @@
     {% endfor %}
     <ul class = "pager">
         {% if not prev_page is empty %}
-        <li class = "prev_link"><a href = "{{prev_page}}">&larr; Prev</a></li>
+        <li class = "prev-link"><a href = "{{prev_page}}">&larr; Prev</a></li>
         {% endif %}
         {% if not next_page is empty %}
-            <li class = "next_link"><a href = "{{next_page}}">Next &rarr;</a></li>
+            <li class = "next-link"><a href = "{{next_page}}">Next &rarr;</a></li>
         {% endif %}
     </ul>
 {% endblock %}

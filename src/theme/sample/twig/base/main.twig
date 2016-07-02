@@ -48,15 +48,15 @@
                 {% endif %}
                 {% set recent_articles = maker.getNewestArticle(5) %}
                 {% if recent_articles|length > 0 %}
-                    <div id="blog_recent" class="col-md-3 col-md-offset-1 hidden-sm-down"
-                        style="background-color: {{maker.color('blog-side')}};"
+                    <div id="blog-recent" class="col-md-3 col-md-offset-1 hidden-sm-down"
+                        style="background-color: {{maker.color('blog-recent')}};"
                     >
                         {% if maker.get('lang') == 'ja' %}
                             最近の記事<br>
                         {% else %}
                             Recent articles<br>
                         {% endif %}
-                        <ul id="recent_list">
+                        <ul id="recent-list">
                             {% for article in recent_articles %}
                                 <li><a href="{{article.link}}">{{article.title}}</a><br></li>
                             {% endfor %}
