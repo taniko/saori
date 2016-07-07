@@ -28,14 +28,14 @@ class Maker
 
     /**
      * get newest articles
-     * @param  integer $count
+     * @param  integer $num
      * @return array
      */
-    public function getNewestArticle(int $count = 1) : array
+    public function getNewestArticle(int $num = 1) : array
     {
         $articles = [];
-        $count  = $count > 0 ? $count : 1;
-        $limit  = (count($this->article_list) < $count) ? count($this->article_list) : $count;
+        $num    = $num > 0 ? $num : 1;
+        $limit  = (count($this->article_list) < $num) ? count($this->article_list) : $num;
         $from   = strlen($this->contents_path);
         for ($i = 0; $i < $limit ; $i++) {
             $articles[] = $this->article_list[$i];
@@ -44,22 +44,52 @@ class Maker
     }
 
     /**
-     * get next articles
-     * @param  Article  $article
-     * @param  integer  $number
+     * get oldest article
+     * @param  integer $num
      * @return array
      */
-    public function getNextArticle(Article $article, int $number = 1) : array
+    public function getOldestArticle(int $num = 1) : array
     {
         $articles   = [];
-        $id         = $article->getId();
-        $number     = $number > 0 ? $number : 1;
-        $limit      =
-            $id + $number < count($this->article_list) ?
-            $id + $number + 1
-            : count($this->article_list);
-        for ($i = $id + 1; $i < $limit; $i++) {
-            $articles[] = $this->article_list[$i];
+        $num        = ($num > 0) ? $num : 1;
+        $key        = count($this->article_list) -1;
+        for ($i = 0; $i < $num && $key >= 0; $i++, $key--) {
+            $articles[] = $this->article_list[$key];
+        }
+        return $articles;
+    }
+
+    /**
+     * get newer Article
+     * @param  Article $article
+     * @param  integer $num
+     * @return array
+     */
+    public function getNewerArticle(Article $article, int $num = 1) : array
+    {
+        $articles   =   [];
+        $key        =   $article->getId() - 1;
+        $num        =   ($num > 0) ? $num : 1;
+        for ($i = 0; $i < $num && $key >= 0; $i++, $key--) {
+            $articles[] = $this->article_list[$key];
+        }
+        return $articles;
+    }
+
+    /**
+     * get older article
+     * @param  Article $article
+     * @param  integer $num
+     * @return array
+     */
+    public function getOlderArticle(Article $article, int $num = 1) : array
+    {
+        $articles   =   [];
+        $key        =   $article->getId() +1;
+        $num        =   ($num > 0) ? $num : 1;
+        $limit      =   count($this->article_list);
+        for ($i = 0; $i < $num && $key < $limit; $i++, $key++) {
+            $articles[] = $this->article_list[$key];
         }
         return $articles;
     }
@@ -83,15 +113,15 @@ class Maker
 
     /**
      * @param  int    $page  corrent page number
-     * @param  int    $number number of articles par page
+     * @param  int    $num number of articles par page
      * @return bool
      */
-    public function existsNextArticlePage(int $page, int $number)
+    public function existsNextArticlePage(int $page, int $num)
     {
-        if ($page < 0 || $number <= 0) {
+        if ($page < 0 || $num <= 0) {
             return false;
         }
-        return (count($this->article_list) - $page * $number) > 0;
+        return (count($this->article_list) - $page * $num) > 0;
     }
 
     /**
@@ -106,16 +136,16 @@ class Maker
 
     /**
      * @param  string  $tag    tag name
-     * @param  integer $number number of articles
+     * @param  integer $num number of articles
      * @return array
      */
-    public function getArticleByTag(string $tag, int $number = 1)
+    public function getArticleByTag(string $tag, int $num = 1)
     {
-        $number     = $number > 0 ? $number : 1;
+        $num        = $num > 0 ? $num : 1;
         $articles   = [];
         if (isset($this->tag_list[$tag])) {
-            $number = count($this->tag_list[$tag]) < $number ? count($this->tag_list[$tag]) : $number;
-            for ($i = 0; $i < $number; $i++) {
+            $num = count($this->tag_list[$tag]) < $num ? count($this->tag_list[$tag]) : $num;
+            for ($i = 0; $i < $num; $i++) {
                 $articles[] = $this->article_list[$this->tag_list[$tag][$i]];
             }
         }
