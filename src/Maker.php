@@ -27,10 +27,11 @@ class Maker
     }
 
     /**
+     * get newest articles
      * @param  integer $count
      * @return array
      */
-    public function getNewestArticle(int $count = 1)
+    public function getNewestArticle(int $count = 1) : array
     {
         $articles = [];
         $count  = $count > 0 ? $count : 1;
@@ -43,6 +44,7 @@ class Maker
     }
 
     /**
+     * get next articles
      * @param  Article  $article
      * @param  integer  $number
      * @return array
@@ -93,14 +95,10 @@ class Maker
     }
 
     /**
-     * @return int count articles
+     * get tag list
+     * @return array
      */
-    public function countArticle()
-    {
-        return count($this->article_list);
-    }
-
-    public function getTagList()
+    public function getTagList() : array
     {
         return array_keys($this->tag_list);
     }
@@ -145,15 +143,17 @@ class Maker
     }
 
     /**
+     * get blog config
      * @param  string $key
      * @return mixed
      */
-    public function get(string $key)
+    public function config(string $key)
     {
         return $this->config->{$key} ?? null;
     }
 
     /**
+     * get user's theme config or theme config
      * @param  string $key
      * @return mixed
      */
@@ -165,6 +165,7 @@ class Maker
     }
 
     /**
+     * get user's theme color or theme color
      * @param  string $key
      * @return mixed
      */

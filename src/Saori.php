@@ -2,7 +2,10 @@
 namespace hrgruri\saori;
 
 use hrgruri\saori\SiteGenerator;
-use hrgruri\saori\exception\{GeneratorException, ConfigException};
+use hrgruri\saori\exception\{
+    GeneratorException,
+    JsonException
+};
 
 class Saori
 {
@@ -35,7 +38,7 @@ class Saori
         try {
             $command = strtolower($argv[1] ?? '');
             if (!in_array($command, self::SAORI_COMMAND)) {
-                throw new \Exception('not found command');
+                throw new \Exception("not found command {$command}");
             }
             unset($argv[0]);
             unset($argv[1]);
@@ -46,6 +49,10 @@ class Saori
 
     }
 
+    /**
+     * initialization
+     * @param  array  $option argv
+     */
     private function init(array $option)
     {
         $result = true;
@@ -81,6 +88,10 @@ class Saori
         );
     }
 
+    /**
+     * post article
+     * @param  array  $option argv
+     */
     private function post(array $option)
     {
         $dir        = date('Y/m');
@@ -133,14 +144,8 @@ class Saori
                 "https://{$this->config->id}.github.io",
                 $this->path['public']
             );
-        } catch (ConfigException $e) {
-            print "CONFIG EXCEPTION\n{$e->getMessage()}\n";
         } catch (GeneratorException $e) {
             print "GENERATOR EXCEPTION\n{$e->getMessage()}\n";
-            $this->clearDirectory($this->path['local'], true);
-            $this->clearDirectory($this->path['public'], true);
-        } catch (\Twig_Error_Runtime $e) {
-            print $e->getMessage().PHP_EOL;
             $this->clearDirectory($this->path['local'], true);
             $this->clearDirectory($this->path['public'], true);
         } catch (\Exception $e) {
@@ -155,31 +160,33 @@ class Saori
 
     private function loadConfig()
     {
-        if (!file_exists("{$this->path['contents']}/config.json")) {
-            throw new ConfigException("Not exists {$this->path['contents']}/config.json");
-        } elseif ( is_null($config = json_decode(file_get_contents("{$this->path['contents']}/config.json"))) ) {
-            throw new ConfigException("please check config.json");
-        }
+        // load site config
+        $config = SiteGenerator::loadJson("{$this->path['contents']}/config.json");
         $flag = true;
         foreach (self::CONFIG_LIST as $key) {
             $flag = $flag && isset($config->{$key});
         }
         if (!($flag && ($config->link instanceof \stdClass) && ($config->feed instanceof \stdClass))) {
-            throw new ConfigException("please check config.json\nlink and  feed must be object");
+            throw new JsonException("please check config.json\nlink and feed must be object");
         }
         $config->local = rtrim($config->local, '/');
-        if (file_exists(__DIR__ . "/theme/{$config->theme}/config.json")) {
-            $tc = json_decode(file_get_contents(__DIR__ ."/theme/{$config->theme}/config.json"));
-            $this->theme_config = ($tc instanceof \stdClass) ? $tc : new \stdClass;
-        } else {
-            $this->theme_config = new \stdClass;
+
+        // load theme config
+        try {
+            $data = SiteGenerator::loadJson(__DIR__ . "/theme/{$config->theme}/config.json");
+        } catch (JsonException $e) {
+            $data = new \stdClass;
         }
-        if (file_exists("{$this->path['contents']}/theme.json")) {
-            $tc = json_decode(file_get_contents("{$this->path['contents']}/theme.json"));
-            $this->ut_config = ($tc instanceof \stdClass) ? $tc : new \stdClass;
-        } else {
-            $this->ut_config = new \stdClass;
+        $this->theme_config = $data;
+
+        // load user's theme config
+        try {
+            $data = SiteGenerator::loadJson("{$this->path['contents']}/theme.json");
+        } catch (JsonException $e) {
+            $data = new \stdClass;
         }
+        $this->ut_config = $data;
+
         $this->path['public']   =   "{$this->root}/{$config->id}.github.io";
         $this->path['theme']    =   __DIR__."/theme/{$config->theme}";
         $this->config           =   $config;

@@ -1,6 +1,6 @@
 {% extends "base/main.twig" %}
 
-{% block title %}{{article.title}} - {{maker.get('title')}}{% endblock %}
+{% block title %}{{article.title}} - {{maker.config('title')}}{% endblock %}
 
 {% block main_block %}
     {% include 'base/article.twig' %}

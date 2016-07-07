@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %}{{maker.get('title')}}{% endblock %}</title>
+        <title>{% block title %}{{maker.config('title')}}{% endblock %}</title>
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="/css/style.css">
@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/github.min.css">
         <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script>
-        {% set ga_id = maker.get('google-analytics') %}
+        {% set ga_id = maker.config('google-analytics') %}
         {% if ga_id is not null %}
             <script>
               (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -27,7 +27,7 @@
     <body style="background-color: {{maker.color('body')}};">
         <div id="blog-header" style="background: {{maker.color('header')}};">
             <div class="container">
-                <h1 id="blog-title"><a href="/">{{maker.get('title')}}</a></h1>
+                <h1 id="blog-title"><a href="/">{{maker.config('title')}}</a></h1>
             </div>
         </div>
         <div class="container">
@@ -51,7 +51,7 @@
                     <div id="blog-recent" class="col-md-3 col-md-offset-1 hidden-sm-down"
                         style="background-color: {{maker.color('blog-recent')}};"
                     >
-                        {% if maker.get('lang') == 'ja' %}
+                        {% if maker.config('lang') == 'ja' %}
                             最近の記事<br>
                         {% else %}
                             Recent articles<br>

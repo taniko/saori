@@ -8,18 +8,14 @@ class Environment
     public $twig;
     public $url;
     public $articles;
+    public $theme_config;
+    public $tag_list;
 
     public function __construct(
-        array $paths,
         \hrgruri\saori\Maker $maker,
-        \Twig_Environment $twig,
-        string $url,
-        array $articles
+        \Twig_Environment $twig
     ) {
-        $this->paths    = $paths;
         $this->maker    = $maker;
         $this->twig     = $twig;
-        $this->url      = $url;
-        $this->articles = $articles;
     }
 }

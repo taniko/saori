@@ -62,16 +62,20 @@ class Article
     }
 
     /**
+     * get article tag(s)
      * @return array
      */
     public function getTags()
     {
-        ksort($this->tags);
-        return $this->tags;
+        return ksort($this->tags);
     }
 
+    /**
+     * get html
+     * @return string
+     */
     public function html()
     {
-        return  (new GithubMarkdown)->parse(file_get_contents("{$this->cache}/article.md"));
+        return (new GithubMarkdown)->parse(file_get_contents("{$this->cache}/article.md"));
     }
 }

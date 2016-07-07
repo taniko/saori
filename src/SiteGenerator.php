@@ -2,7 +2,10 @@
 namespace hrgruri\saori;
 
 use hrgruri\saori\Maker;
-use hrgruri\saori\exception\GeneratorException;
+use hrgruri\saori\exception\{
+    GeneratorException,
+    JsonException
+};
 use hrgruri\saori\generator\{
     IndexGenerator,
     UserPageGenerator,
@@ -46,17 +49,8 @@ class SiteGenerator
             ArticleGenerator::cacheArticle($this->path);
             self::$articles = ArticleGenerator::getArticles($this->path);
             self::$tag_list = TagPageGenerator::getTagList(self::$articles);
-            $flag = true;
         }
-        $env = new \hrgruri\saori\generator\Environment(
-            $this->path,
-            $this->getMaker(),
-            $this->twig,
-            $this->url,
-            self::$articles
-        );
-        $env->theme_config  = $this->theme_config;
-        $env->tag_list      = self::$tag_list;
+        $env = $this->getEnvironment();
         IndexGenerator::generate($env, $this->config);
         ArticleGenerator::generate($env, $this->config);
         TagPageGenerator::generate($env, $this->config);
@@ -78,6 +72,24 @@ class SiteGenerator
             $this->ut_config,
             self::$tag_list
         );
+    }
+
+    /**
+     * get environment
+     * @return \hrgruri\saori\generator\Environment
+     */
+    private function getEnvironment()
+    {
+        $env = new \hrgruri\saori\generator\Environment(
+            $this->getMaker(),
+            $this->twig
+        );
+        $env->paths         =   $this->path;
+        $env->url           =   $this->url;
+        $env->articles      =   self::$articles;
+        $env->theme_config  =   $this->theme_config;
+        $env->tag_list      =   self::$tag_list;
+        return $env;
     }
 
     private function getSubDirectory(string $path)
@@ -126,5 +138,19 @@ class SiteGenerator
             }
             closedir($dh);
         }
+    }
+
+    /**
+     * @param  string   $file filename
+     * @return mixed
+     */
+    public static function loadJson(string $file)
+    {
+        if (!file_exists($file)) {
+            throw new JsonException("{$file} is not exits");
+        } elseif (is_null($data = json_decode(file_get_contents($file)))){
+            throw new JsonException("{$file} is broken");
+        }
+        return $data;
     }
 }
