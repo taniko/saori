@@ -37,6 +37,7 @@ class SiteGenerator
         $this->twig         = new \Twig_Environment(
             new \Twig_Loader_Filesystem("{$this->path['theme']}/twig")
         );
+        $this->addTwigFilter();
     }
 
     public function generate(string $url, string $to)
@@ -152,5 +153,18 @@ class SiteGenerator
             throw new JsonException("{$file} is broken");
         }
         return $data;
+    }
+
+    private function addTwigFilter()
+    {
+        $this->twig->addFilter(
+            new \Twig_SimpleFilter('stdClass_to_array', function (\stdClass $std){
+                $result = [];
+                foreach ($std as $key => $value) {
+                    $result[$key] = $value;
+                }
+                return $result;
+            })
+        );
     }
 }
