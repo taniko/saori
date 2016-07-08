@@ -1,0 +1,15 @@
+{% extends 'base/main.twig' %}
+
+{% block main_block %}
+    {% for article in articles %}
+        {% include 'base/article.twig' %}
+    {% endfor %}
+    <nav class="pager">
+        {% if not prev_page is empty %}
+            <a class="new" href="{{prev_page}}">&larr; 前のページ </a>
+        {% endif %}
+        {% if not next_page is empty %}
+            <a class="old" href="{{next_page}}">次のページ &rarr;</a>
+        {% endif %}
+    </nav>
+{% endblock %}

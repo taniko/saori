@@ -1,0 +1,17 @@
+{% extends "base/main.twig" %}
+
+{% block title %}{{article.title}} - {{maker.config('title')}}{% endblock %}
+
+{% block main_block %}
+    {% include 'base/article.twig' %}
+    <nav class="pager">
+        {% set newer_link = article.newer_link %}
+        {% set older_link = article.older_link %}
+        {% if not newer_link is empty %}
+            <a class="new" href="{{newer_link}}">&larr; {{maker.getNewerArticle(article,1)[0].title}}</a>
+        {% endif %}
+        {% if not older_link is empty %}
+            <a class="old" href="{{older_link}}">{{maker.getOlderArticle(article,1)[0].title}} &rarr;</a>
+        {% endif %}
+    </nav>
+{% endblock %}

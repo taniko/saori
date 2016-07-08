@@ -1,0 +1,20 @@
+<div class="article">
+    <span class="article-date">{{article.getDate(maker.theme('date-format'))}}</span>
+    <h1 class="article-title"><a href="{{article.link}}">{{article.title}}</a></h1>
+    {% if article.tags|length > 0 %}
+        <ul class="article-tags">
+            {% for tag in article.tags %}
+                <li><a href="/tag/{{tag}}/1">{{tag}}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <div class="article-contents">
+        {% autoescape false %}
+            {{article.html}}
+        {% endautoescape %}
+    </div>
+    {% set share_list = maker.config('share') %}
+    {% if 'twitter' in share_list %}
+        <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    {% endif %}
+</div>

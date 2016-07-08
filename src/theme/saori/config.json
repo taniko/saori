@@ -1,0 +1,10 @@
+{
+    "noapp":5,
+    "color" : {
+        "header" : "#000033",
+        "title" : "#EEEEEE",
+        "body"      : "white",
+        "article"   : "#FFF1CF"
+    },
+    "date-format" : "Y-m-d"
+}
