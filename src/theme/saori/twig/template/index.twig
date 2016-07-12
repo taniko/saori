@@ -6,7 +6,7 @@
     {% endfor %}
     <nav class="pager">
         {% if maker.existsNextArticlePage(1, maker.noapp) > 0 %}
-            <a class="old" href="/page/2">次のページ &rarr;</a>
+            <div class="next"><a href="/page/2">next &raquo;</a></div>
         {% endif %}
     </nav>
 {% endblock %}

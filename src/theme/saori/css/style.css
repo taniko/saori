@@ -18,30 +18,62 @@ body {
     text-decoration:underline;
 }
 
-#blog-main {
-    padding-left: 0px;
-    padding-right: 0px;
-}
-
-/*  pager setting   */
-.pager-next a {
-    margin-right: 10px;
-    float: right;
-}
-
-.pager-prev a {
-    margin-left: 10px;
+/*  pager */
+nav > .previous {
+    font-size: x-large;
     float: left;
 }
 
-.prev-link a {
-    margin-left: 10px;
-    float: left;
+nav > .next {
+    font-size: x-large;
+    float: right;
 }
 
-.next-link a {
-    margin-right: 10px;
-    float: right;
+nav.pager {
+    padding-bottom: 10px;
+}
+
+.pager {
+    padding-top: 10px;
+}
+
+#pager-next {
+    text-align: center;
+}
+
+#pager-prev {
+    text-align: center;
+}
+
+.lines{
+  display: table;
+  text-align: center;
+  white-space: nowrap;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.lines:after, .lines:before {
+  content: '';
+  display: table-cell;
+  width: 50%;
+  background: linear-gradient(transparent 50%, currentColor 50%, currentColor calc(50% + 1px), transparent calc(50% + 1px));
+  -webkit-background-clip: padding;
+  background-clip: padding;
+}
+
+.lines:after {
+  border-left: 1em solid transparent;
+}
+
+.lines:before {
+  border-right: 1em solid transparent;
+}
+
+/* side */
+[id^="side-"] {
+    padding: 5px 10px;
+    margin-bottom: 10px;
 }
 
 .side-title {
@@ -49,123 +81,38 @@ body {
     width: 100%;
 }
 
-#side-profile {
-    padding: 5px 10px;
-}
-
-#side-links {
-    padding: 10px;
-    margin-top: 10px;
-}
-
-#side-links ul {
+[id^="side-"] ul {
     padding-top: 10px;
     margin-left: 0px;
     padding-left: 0px;
 }
 
-#side-links li:before {
-    content: "\25B6";
-    font-size: small;
+[id^="side-"] li:before {
+    content: "\2771";
+    font-size: large;
     margin-right: 10px;
-    top: 3px;
     color: #ccc;
 }
 
-#side-links li {
+[id^="side-"] li {
     margin-left: 0px;
     list-style-type: none;
     padding-left: 10px;
 }
 
-#side-links li:last-child{
+[id^="side-"] li:last-child{
     padding-left: 10px;
 }
 
-#side-links li a {
+[id^="side-"] li a {
     color:#000000;
     text-decoration:none;
 }
 
-#side-links li a:hover{
+[id^="side-"] li a:hover{
     color:black;
     text-decoration:underline;
 }
-
-#side-recent {
-    margin-top: 10px;
-    padding: 10px;
-}
-
-#side-recent ul {
-    padding-top: 10px;
-    margin-left: 0px;
-    padding-left: 0px;
-}
-
-#side-recent li:before {
-    content: "\25B6";
-    font-size: small;
-    margin-right: 10px;
-    top: 3px;
-    color: #ccc;
-}
-
-#side-recent li {
-    margin-left: 0px;
-    list-style-type: none;
-    padding-left: 10px;
-}
-
-#side-recent li:last-child{
-    padding-left: 10px;
-}
-
-#side-recent li a {
-    color: black;
-    text-decoration:none;
-}
-
-#side-recent li a:hover{
-    color:black;
-    text-decoration:underline;
-}
-
-#side-tags {
-    margin-top: 10px;
-    padding-left: 10px;
-}
-
-#side-tags ul {
-    padding-top: 10px;
-    margin-left: 0px;
-    padding-left: 0px;
-}
-
-#side-tags li:before {
-    content: "\25B6";
-    font-size: small;
-    margin-right: 10px;
-    top: 3px;
-    color: #ccc;
-}
-
-#side-tags li {
-    margin-left: 0px;
-    list-style-type: none;
-    padding-left: 10px;
-}
-
-#side-tags li a {
-    color: black;
-    text-decoration:none;
-}
-
-#side-tags li a:hover{
-    color:black;
-    text-decoration:underline;
-}
-
 
 #page-contents {
     margin-bottom: 25px;
@@ -176,20 +123,4 @@ body {
 
 #page-contents img{
     max-width: 100%;
-}
-
-nav.pager {
-  position: relative;
-  margin-bottom: 30px;
-}
-
-nav.pager .old {
-    position: absolute;
-    right: 0;
-    padding-right: 10px;
-}
-nav.pager .new {
-    position: absolute;
-    left: 0;
-    padding-left: 10px;
 }

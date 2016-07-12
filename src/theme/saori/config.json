@@ -3,8 +3,10 @@
     "color" : {
         "header" : "#000033",
         "title" : "#EEEEEE",
-        "body"      : "white",
-        "article"   : "#FFF1CF"
+        "body"      : "#E9E9E9",
+        "article"   : "#FFF1CF",
+        "main" : "white",
+        "side" : "white"
     },
     "date-format" : "Y-m-d"
 }
