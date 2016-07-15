@@ -1,7 +1,7 @@
 {
     "id": "username",
     "local": "http://localhost:8000",
-    "title": "Example Blog",
+    "title": "Sample Blog",
     "author": "John Doe",
     "theme": "sample",
     "lang": "en",
