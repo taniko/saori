@@ -44,3 +44,6 @@ config.json
     }
 }
 ```
+
+***
+my [blog](https://hrgruri.github.io/) and [repository](https://github.com/hrgruri/blog)
