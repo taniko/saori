@@ -9,7 +9,7 @@ use hrgruri\saori\exception\{
 
 class Saori
 {
-    const SAORI_COMMAND =   ['init', 'post', 'make'];
+    const SAORI_COMMAND =   ['init', 'post', 'make', 'draft'];
     const CONFIG_LIST   =   ['id', 'local', 'title', 'author', 'theme', 'lang', 'link'];
     private $config;
     private $root;
@@ -94,18 +94,24 @@ class Saori
      */
     private function post(array $option)
     {
-        $dir        = date('Y/m');
+        $timestamp  = date('YmdHis');
+        $flag       = (!is_null($option[0]) && file_exists("{$this->root}/draft/{$option[0]}")) ? true : false;
         $title      = $option[0] ?? date('dHi');
-        $timestamp   = date('YmdHis');
+        $dir        = "{$this->path['article']}/". date('Y/m') ."/{$title}";
         if (preg_match('/^[\w-_]+$/', $title) !== 1) {
             throw new \Exception('error: title');
-        }
-        $dir = "{$this->path['article']}/{$dir}/{$title}";
-        if (is_dir($dir)) {
+        } elseif (is_dir($dir)) {
             throw new \Exception("this title({$title}) already exist");
         }
-        mkdir($dir, 0700, true);
-        touch("{$dir}/article.md");
+
+        if ($flag === true) {
+            SiteGenerator::copyDirectory("{$this->root}/draft/{$title}", $dir);
+            $this->clearDirectory("{$this->root}/draft/{$title}");
+            rmdir("{$this->root}/draft/{$title}");
+        } else {
+            mkdir($dir, 0700, true);
+            touch("{$dir}/article.md");
+        }
         file_put_contents(
             "{$dir}/config.json",
             json_encode(
@@ -144,6 +150,7 @@ class Saori
                 "https://{$this->config->id}.github.io",
                 $this->path['public']
             );
+            print "DONE\n";
         } catch (GeneratorException $e) {
             print "GENERATOR EXCEPTION\n{$e->getMessage()}\n";
             $this->clearDirectory($this->path['local'], true);
@@ -156,6 +163,21 @@ class Saori
             /*  clear cache */
             $this->clearDirectory($this->path['cache']);
         }
+    }
+
+    /**
+     * create draft file
+     * @param  array  $option
+     */
+    private function draft(array $option)
+    {
+        $title  =   $option[0] ?? 'temp';
+        $dir    =   "{$this->root}/draft/{$title}";
+        if (file_exists($dir)) {
+            throw new \Exception("draft/{$title} already exist");
+        }
+        mkdir($dir, 0700, true);
+        touch("{$dir}/article.md");
     }
 
     private function loadConfig()
