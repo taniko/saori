@@ -74,8 +74,8 @@ class Article
      * get html
      * @return string
      */
-    public function html()
+    public function html() : string
     {
-        return (new GithubMarkdown)->parse(file_get_contents("{$this->cache}/article.md"));
+        return file_get_contents("{$this->cache}/article.html");
     }
 }

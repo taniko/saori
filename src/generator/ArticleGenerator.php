@@ -2,6 +2,7 @@
 namespace hrgruri\saori\generator;
 
 use hrgruri\saori\Article;
+use cebe\markdown\GithubMarkdown;
 
 class ArticleGenerator extends Generator
 {
@@ -97,8 +98,8 @@ class ArticleGenerator extends Generator
             if (!is_dir("{$paths['cache']}/article/$matched[2]}")) {
                 mkdir("{$paths['cache']}/article/{$matched[2]}", 0700, true);
                 file_put_contents(
-                    "{$paths['cache']}/article/{$matched[2]}/article.md",
-                    self::rewriteImagePath($file, "/article/{$matched[2]}")
+                    "{$paths['cache']}/article/{$matched[2]}/article.html",
+                    (new GithubMarkdown)->parse(self::rewriteImagePath($file, "/article/{$matched[2]}"))
                 );
             }
         }
