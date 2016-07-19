@@ -112,17 +112,17 @@ class SiteGenerator
     private function copyTheme()
     {
         if (is_dir("{$this->path['theme']}/css")) {
-            $this->copyDirectory("{$this->path['theme']}/css", "{$this->root}/css");
+            self::copyDirectory("{$this->path['theme']}/css", "{$this->root}/css");
         }
         if (is_dir("{$this->path['theme']}/js")) {
-            $this->copyDirectory("{$this->path['theme']}/js", "{$this->root}/js");
+            self::copyDirectory("{$this->path['theme']}/js", "{$this->root}/js");
         }
         if (is_dir("{$this->path['theme']}/img")) {
-            $this->copyDirectory("{$this->path['theme']}/img", "{$this->root}/img");
+            self::copyDirectory("{$this->path['theme']}/img", "{$this->root}/img");
         }
     }
 
-    private function copyDirectory(string $from, string $to)
+    public static function copyDirectory(string $from, string $to)
     {
         if (!is_dir($to)) {
             mkdir($to, 0700, true);
@@ -132,7 +132,7 @@ class SiteGenerator
                 if ($file === '.' || $file === '..') {
                     continue;
                 } elseif (is_dir("{$from}/{$file}")) {
-                    $this->copyDirectory("{$from}/{$file}", "{$to}/{$file}");
+                    self::copyDirectory("{$from}/{$file}", "{$to}/{$file}");
                 } else {
                     copy("{$from}/{$file}", "{$to}/{$file}");
                 }
