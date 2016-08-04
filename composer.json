@@ -4,13 +4,15 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "hrgruri\\saori\\":"src"
+            "hrgruri\\saori\\":"src",
+            "Hrgruri\\Saori\\":"src"
         }
     },
     "require": {
         "php": ">=7.0.0",
         "twig/twig": "^1.24",
         "cebe/markdown": "^1.1",
-        "mibe/feedwriter": "^1.0"
+        "mibe/feedwriter": "^1.0",
+        "symfony/console": "^3.1"
     }
 }
