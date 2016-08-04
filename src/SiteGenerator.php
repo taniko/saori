@@ -1,12 +1,12 @@
 <?php
-namespace hrgruri\saori;
+namespace Hrgruri\Saori;
 
-use hrgruri\saori\Maker;
-use hrgruri\saori\exception\{
+use Hrgruri\Saori\Maker;
+use Hrgruri\Saori\Exception\{
     GeneratorException,
     JsonException
 };
-use hrgruri\saori\generator\{
+use Hrgruri\Saori\Generator\{
     IndexGenerator,
     UserPageGenerator,
     ArticleGenerator,
@@ -61,7 +61,7 @@ class SiteGenerator
     }
 
     /**
-     * @return \hrgruri\saori\Maker
+     * @return \Hrgruri\Saori\Maker
      */
     private function getMaker()
     {
@@ -77,11 +77,11 @@ class SiteGenerator
 
     /**
      * get environment
-     * @return \hrgruri\saori\generator\Environment
+     * @return \Hrgruri\Saori\Generator\Environment
      */
     private function getEnvironment()
     {
-        $env = new \hrgruri\saori\generator\Environment(
+        $env = new \Hrgruri\Saori\Generator\Environment(
             $this->getMaker(),
             $this->twig
         );

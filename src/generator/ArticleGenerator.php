@@ -1,7 +1,7 @@
 <?php
-namespace hrgruri\saori\generator;
+namespace Hrgruri\Saori\Generator;
 
-use hrgruri\saori\Article;
+use Hrgruri\Saori\Article;
 use cebe\markdown\GithubMarkdown;
 
 class ArticleGenerator extends Generator

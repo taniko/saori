@@ -1,8 +1,8 @@
 <?php
-namespace hrgruri\saori;
+namespace Hrgruri\Saori;
 
-use hrgruri\saori\Article;
-use hrgruri\saori\exception\GeneratorException;
+use Hrgruri\Saori\Article;
+use Hrgruri\Saori\Exception\GeneratorException;
 use cebe\markdown\GithubMarkdown;
 
 class Maker

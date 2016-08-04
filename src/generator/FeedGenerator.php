@@ -1,7 +1,7 @@
 <?php
-namespace hrgruri\saori\generator;
+namespace Hrgruri\Saori\Generator;
 
-use hrgruri\saori\Article;
+use Hrgruri\Saori\Article;
 use FeedWriter\{Item, ATOM, Feed};
 
 class FeedGenerator extends Generator

@@ -8,7 +8,7 @@ main.php
 ```php
 <?php
 require ('vendor/autoload.php');
-$saori = new hrgruri\saori\Saori(__DIR__);
+$saori = new Hrgruri\Saori\Saori(__DIR__);
 $saori->run($argv);
 
 ```

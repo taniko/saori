@@ -1,5 +1,5 @@
 <?php
-namespace hrgruri\saori\generator;
+namespace Hrgruri\Saori\Generator;
 
 use cebe\markdown\GithubMarkdown;
 

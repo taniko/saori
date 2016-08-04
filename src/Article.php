@@ -1,5 +1,5 @@
 <?php
-namespace hrgruri\saori;
+namespace Hrgruri\Saori;
 
 use cebe\markdown\GithubMarkdown;
 

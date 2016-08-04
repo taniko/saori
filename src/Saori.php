@@ -1,8 +1,8 @@
 <?php
-namespace hrgruri\saori;
+namespace Hrgruri\Saori;
 
-use hrgruri\saori\SiteGenerator;
-use hrgruri\saori\exception\{
+use Hrgruri\Saori\SiteGenerator;
+use Hrgruri\Saori\Exception\{
     GeneratorException,
     JsonException
 };

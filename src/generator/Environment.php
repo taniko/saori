@@ -1,5 +1,5 @@
 <?php
-namespace hrgruri\saori\generator;
+namespace Hrgruri\Saori\Generator;
 
 class Environment
 {
@@ -12,7 +12,7 @@ class Environment
     public $tag_list;
 
     public function __construct(
-        \hrgruri\saori\Maker $maker,
+        \Hrgruri\Saori\Maker $maker,
         \Twig_Environment $twig
     ) {
         $this->maker    = $maker;

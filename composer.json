@@ -1,10 +1,10 @@
 {
-    "name": "hrgruri/saori",
+    "name": "Hrgruri/Saori",
     "description": "blog tool for user_name.github.io",
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "hrgruri\\saori\\":"src"
+            "Hrgruri\\Saori\\":"src"
         }
     },
     "require": {
