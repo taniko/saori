@@ -33,6 +33,16 @@ class DraftCommand extends Command
             }
             mkdir($dir, 0700, true);
             touch("{$dir}/article.md");
+            file_put_contents(
+                "{$dir}/config.json",
+                json_encode(
+                    [
+                        "title"     =>  (string)$name,
+                        "tag"       =>  [],
+                    ],
+                    JSON_PRETTY_PRINT
+                )
+            );
             $output->writeln("<info>generate (draft/{$name})</info>");
         } catch (\Exception $e) {
             $output->writeln("<error>{$e->getMessage()}</error>");

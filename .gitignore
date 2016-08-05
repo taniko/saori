@@ -1,7 +1,8 @@
 composer.phar
-composer.lock
 /vendor/
 !.gitkeep
 /local
 /*.github.io
 /contents
+/draft
+/cache
