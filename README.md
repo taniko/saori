@@ -1,43 +1,49 @@
-Saori
-====
+# Saori
+Saori is PHP static site generator for github.io
 
-static site generator
-
-## Setting
-main.php
-```php
-<?php
-require ('vendor/autoload.php');
-$saori = new Hrgruri\Saori\Saori(__DIR__);
-$saori->run($argv);
-
+## Installation
+### Use hrgruri/saori-skeleton
+```sh
+composer create-project hrgruri/saori-skeleton blog
+```
+### Use hrgruri/saori
+```sh
+mkdir blog
+cd blog
+composer require hrgruri/saori
 ```
 
 ## Usage
 ```sh
+php saori
+
 # initialize
-php main.php init
+php saori init
 
-# post article
-php main.php post (article_title)
+# generate draft file
+php saori draft first_article
 
-# edit article
-vim contents/:year/:month/:article_title/article.md
-vim contents/:year/:month/:article_title/config.json
+# edit draft file
+vim draft/first_article/article.md
+vim draft/first_article/config.json
 
-# make local & username.github.io
-php main.php make
+# post
+php saori post first_article
+
+# generate static site
+php saori build
 ```
 
-config.json
+## Setting
+contents/config.json
 ```json
 {
     "id"        :   "username",
     "local"     :   "http://localhost:8000",
     "title"     :   "Example Blog",
-    "author"    :   "John Doe",
-    "theme"     :   "sample",
-    "lang"      :   "ja",
+    "author"    :   "John",
+    "theme"     :   "saori",
+    "lang"      :   "en",
     "link"      :   {
         "github"    :   "https://github.com",
         "twitter"   :   "https://twitter.com"
