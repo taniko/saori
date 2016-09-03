@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit
+    colors="true"
+    bootstrap="src/bootstrap/autoload.php"
+    backupGlobals="false">
+
+    <testsuite name="saori tests">
+        <directory>tests/</directory>
+    </testsuite>
+</phpunit>

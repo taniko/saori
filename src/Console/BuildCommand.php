@@ -71,7 +71,8 @@ class BuildCommand extends Command
         $this->clearDirectory($this->paths[$type], true);
         $this->generator->generate(
             $this->config->{$type},
-            $this->paths[$type]
+            $this->paths[$type],
+            $type === 'public' ? true : false
         );
     }
 }

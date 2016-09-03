@@ -11,19 +11,21 @@ class Maker
     private $config;
     private $contents_path;
     private $ut_config;
+    private $public;
     public  $theme_config;
     public  $noapp;
     public  $tag_list;
 
-    public function __construct($config, $article_list, $path, $tc, $ut, $tag_list)
+    public function __construct($config, $article_list, $path, $tc, $ut, $tag_list, $public)
     {
-        $this->config        = $config;
-        $this->article_list  = $article_list;
-        $this->contents_path = $path;
-        $this->theme_config  = $tc;
-        $this->ut_config     = $ut;
-        $this->noapp         = $this->theme_config->noapp ?? 10;
-        $this->tag_list      = $tag_list;
+        $this->config           = $config;
+        $this->article_list     = $article_list;
+        $this->contents_path    = $path;
+        $this->theme_config     = $tc;
+        $this->ut_config        = $ut;
+        $this->noapp            = $this->theme_config->noapp ?? 10;
+        $this->tag_list         = $tag_list;
+        $this->public           = $public;
     }
 
     /**
@@ -204,5 +206,21 @@ class Maker
         return $this->ut_config->{$this->config->theme}->color->{$key}
             ?? $this->theme_config->color->{$key}
             ?? null;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPublic()
+    {
+        return $this->public;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isLocal()
+    {
+        return !$this->isPublic();
     }
 }

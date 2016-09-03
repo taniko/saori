@@ -24,9 +24,9 @@ class SiteGenerator
     private $config;
     private $theme_config;
     private $ut_config;
+    private $twig;
     private static $articles;
     private static $tag_list;
-    private $twig;
 
     public function __construct(array $path, \stdClass $config, \stdClass $tc, \stdClass $ut)
     {
@@ -40,10 +40,11 @@ class SiteGenerator
         $this->addTwigFilter();
     }
 
-    public function generate(string $url, string $to)
+    public function generate(string $url, string $to, bool $public)
     {
-        $this->url  = rtrim($url, '/');
-        $this->root = rtrim($to, '/');
+        $this->public       = $public;
+        $this->url          = rtrim($url, '/');
+        $this->root         = rtrim($to, '/');
         $this->path['root'] = $this->root;
         $this->copyTheme();
         if (!isset(self::$articles)) {
@@ -71,7 +72,8 @@ class SiteGenerator
             $this->path['contents'],
             $this->theme_config,
             $this->ut_config,
-            self::$tag_list
+            self::$tag_list,
+            $this->public
         );
     }
 
