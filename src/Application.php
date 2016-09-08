@@ -10,5 +10,6 @@ class Application extends \Symfony\Component\Console\Application
         $this->add(new Console\DraftCommand($path));
         $this->add(new Console\PostCommand($path));
         $this->add(new Console\BuildCommand($path));
+        $this->add(new Console\PageCommand($path));
     }
 }

@@ -83,4 +83,18 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
             rmdir($dir);
         }
     }
+
+    /**
+     * make directory
+     * @param  string $path
+     * @return boolean
+     */
+    protected function mkdir(string $path)
+    {
+        $result = false;
+        if (!file_exists($path)) {
+            $result = mkdir($path, 0700, true);
+        }
+        return $result;
+    }
 }
