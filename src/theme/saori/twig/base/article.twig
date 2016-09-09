@@ -1,4 +1,4 @@
-<div class="article" style="background: {{maker.color('main')}};">
+<article style="background: {{maker.color('main')}};">
     <span class="article-date">{{article.getDate(maker.theme('date-format'))}}</span>
     <h1 class="article-title"><a href="{{article.link}}">{{article.title}}</a></h1>
     {% if article.tags|length > 0 %}
@@ -36,4 +36,4 @@
             {% endif %}
         </div>
     {% endif %}
-</div>
+</article>
