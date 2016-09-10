@@ -5,61 +5,28 @@ use Hrgruri\Saori\Article;
 
 class ArticleTest extends TestCase
 {
-    private function createArticleConfig()
-    {
-        $faker = Faker::create();
-        $config = new \stdClass;
-        $config->title      = $faker->text(20);
-        $config->tag        = $faker->words(3, false);
-        $config->timestamp  = $faker->unixTime();
-        return $config;
-    }
 
     public function testGetId()
     {
-        $id = rand();
-        $article = new Article(
-            $id,
-            $this->createArticleConfig(),
-            [
-                'cache' => '',
-                'link'  => '',
-                'newer' => '',
-                'older' => ''
-            ]
-        );
+        $faker   = Faker::create();
+        $id      = rand();
+        $article = $this->createArticle($faker, $id);
         $this->assertEquals($id, $article->getId());
     }
 
     public function testGetTimestamp()
     {
-        $config  = $this->createArticleConfig();
-        $article = new Article(
-            rand(),
-            $config,
-            [
-                'cache' => '',
-                'link'  => '',
-                'newer' => '',
-                'older' => ''
-            ]
-        );
+        $faker   = Faker::create();
+        $config  = $this->createArticleConfig($faker);
+        $article = $this->createArticle($faker, null, $config);
         $this->assertEquals($config->timestamp, $article->getTimestamp());
     }
 
     public function testGetDate()
     {
-        $config  = $this->createArticleConfig();
-        $article = new Article(
-            rand(),
-            $config,
-            [
-                'cache' => '',
-                'link'  => '',
-                'newer' => '',
-                'older' => ''
-            ]
-        );
+        $faker   = Faker::create();
+        $config  = $this->createArticleConfig($faker);
+        $article = $this->createArticle($faker, null, $config);
         $this->assertEquals(
             date('F j, Y', $config->timestamp),
             $article->getDate()
