@@ -52,7 +52,7 @@ class PostCommand extends Command
                         "{$dest}/config.json",
                         json_encode(
                             $data,
-                            JSON_PRETTY_PRINT
+                            JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
                         )
                     );
                 } else {
