@@ -62,15 +62,6 @@ class Article
     }
 
     /**
-     * get article tag(s)
-     * @return array
-     */
-    public function getTags()
-    {
-        return ksort($this->tags);
-    }
-
-    /**
      * get html
      * @return string
      */
