@@ -9,14 +9,9 @@ use org\bovigo\vfs\{
 
 class DraftTest extends TestCase
 {
-    private $root;
-
     public function setUp()
     {
         parent::setUp();
-        vfsStreamWrapper::register();
-        vfsStreamWrapper::setRoot(new vfsStreamDirectory('saori'));
-        $this->root = vfsStream::url('saori');
     }
 
     public function testExecute()

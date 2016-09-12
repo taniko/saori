@@ -102,7 +102,7 @@ abstract class Generator
             if (!file_exists($path)) {
                 file_put_contents($path, $contents);
             } else {
-                print "{$path} is already exists\n";
+                throw new \Exception("{$path} is already exists");
             }
         }
     }
@@ -115,9 +115,8 @@ abstract class Generator
             }
             if (!file_exists($to)) {
                 copy($from, $to);
-
             } else {
-                print "{$to} is already exists\n";
+                throw new \Exception("{$to} is already exists");
             }
         }
     }
@@ -125,8 +124,8 @@ abstract class Generator
     protected static function rewriteImagePath(string $file, string $path)
     {
         return preg_replace(
-            '/\!\[.*\]\(([a-zA-Z0-9\-_\/]+\.[a-zA-Z]+)(\s+\"\w*\"|)\)/',
-            '![]('. $path .'/${1}${2})',
+            '/\!\[(.*)\]\(([a-zA-Z0-9\-_\/]+\.[a-zA-Z]+)(\s+\"\w*\"|)\)/',
+            '![${1}]('. $path .'/${2}${3})',
             file_get_contents($file)
         );
     }

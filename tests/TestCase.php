@@ -1,9 +1,22 @@
 <?php
 
 use Faker\Factory as Faker;
+use org\bovigo\vfs\{
+    vfsStream,
+    vfsStreamWrapper,
+    vfsStreamDirectory
+};
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
+    protected $root;
+
+    public function setUp()
+    {
+        vfsStreamWrapper::register();
+        vfsStreamWrapper::setRoot(new vfsStreamDirectory('saori'));
+        $this->root = vfsStream::url('saori');
+    }
     /**
      * @param  mixed    $instance
      * @param  string   $name method name
@@ -56,5 +69,15 @@ class TestCase extends \PHPUnit\Framework\TestCase
         $config->tag        = $faker->words(3, false);
         $config->timestamp  = $faker->unixTime();
         return $config;
+    }
+
+    /**
+     * @param  string $name file name
+     * @return string
+     */
+    protected function file(string $name) : string
+    {
+        $name = ltrim($name, '/');
+        return "{$this->root}/$name";
     }
 }
