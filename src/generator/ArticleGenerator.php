@@ -8,10 +8,8 @@ class ArticleGenerator extends Generator
 {
     const NOAPP         =   10;
 
-    public static function generate(
-        Environment $env,
-        \stdClass $config
-    ) {
+    public static function generate(Environment $env)
+    {
         self::copyDirectory(
             $env->paths['article'],
             "{$env->paths['root']}/article"

@@ -3,10 +3,8 @@ namespace Hrgruri\Saori\Generator;
 
 class UserPageGenerator extends Generator
 {
-    public static function generate(
-        Environment $env,
-        \stdClass $config
-    ) {
+    public static function generate(Environment $env)
+    {
         static $file_list;
         static $img_list;
         if (!isset($file_list)) {

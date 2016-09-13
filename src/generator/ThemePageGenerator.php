@@ -3,10 +3,8 @@ namespace Hrgruri\Saori\Generator;
 
 class ThemePageGenerator extends Generator
 {
-    public static function generate(
-        Environment $env,
-        \stdClass $config
-    ) {
+    public static function generate(Environment $env)
+    {
         static $files;
         static $twig_files;
         if (!isset($twig_files)) {

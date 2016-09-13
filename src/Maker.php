@@ -12,11 +12,12 @@ class Maker
     private $contents_path;
     private $ut_config;
     private $public;
+    private $url;
     public  $theme_config;
     public  $noapp;
     public  $tag_list;
 
-    public function __construct($config, $article_list, $path, $tc, $ut, $tag_list, $public)
+    public function __construct($config, $article_list, $path, $tc, $ut, $tag_list, $public, string $url)
     {
         $this->config           = $config;
         $this->article_list     = $article_list;
@@ -26,6 +27,23 @@ class Maker
         $this->noapp            = $this->theme_config->noapp ?? 10;
         $this->tag_list         = $tag_list;
         $this->public           = $public;
+        $this->url              = $url;
+    }
+
+    public function __get($name)
+    {
+        if ($name === 'articles') {
+            return $this->article_list;
+        } elseif (isset($this->$name)) {
+            return $this->$name;
+        } else {
+            throw new \LogicException();
+        }
+    }
+
+    public function getArticles()
+    {
+        return $this->article_list;
     }
 
     /**

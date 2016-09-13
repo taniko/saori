@@ -34,15 +34,16 @@ class BuildCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->loadConfig();
-        $this->generator = new SiteGenerator(
-            $this->paths,
-            $this->config,
-            $this->theme_config,
-            $this->ut_config
-        );
-        $this->clearDirectory($this->paths['cache']);
         try {
+            $this->loadConfig();
+            $this->paths = $this->updatePaths($this->paths, $this->config->id, $this->config->theme);
+            $this->generator = new SiteGenerator(
+                $this->paths,
+                $this->config,
+                $this->theme_config,
+                $this->ut_config
+            );
+            $this->clearDirectory($this->paths['cache']);
             if ($input->getOption('local')) {
                 $this->build('local');
                 $output->writeln('<info>generated local site</info>');
@@ -56,23 +57,19 @@ class BuildCommand extends Command
                 $this->build('public');
                 $output->writeln('<info>generated local & public site</info>');
             }
-        } catch (GeneratorException $e) {
-            $output->writeln("<error>{$e->getMessage()}</error>");
+            $result = 0;
         } catch (\Exception $e) {
             $output->writeln("<error>{$e->getMessage()}</error>");
+            $result = 1;
         } finally {
             $this->clearDirectory($this->paths['cache']);
         }
+        return $result;
     }
 
     private function build(string $type)
     {
-        $this->loadConfig();
         $this->clearDirectory($this->paths[$type], true);
-        $this->generator->generate(
-            $this->config->{$type},
-            $this->paths[$type],
-            $type === 'public' ? true : false
-        );
+        $this->generator->generate($type);
     }
 }

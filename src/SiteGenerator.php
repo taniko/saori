@@ -18,47 +18,51 @@ use cebe\markdown\GithubMarkdown;
 
 class SiteGenerator
 {
-    private $root;
-    private $url;
-    private $path;
-    private $config;
-    private $theme_config;
-    private $ut_config;
+    private $root;      // directory
+    private $url;       // site url
+    private $paths;
+    private $config;        // blog config
+    private $theme_config;  // theme config
+    private $ut_config;     // user theme config
     private $twig;
     private static $articles;
     private static $tag_list;
 
-    public function __construct(array $path, \stdClass $config, \stdClass $tc, \stdClass $ut)
+    public function __construct(array $paths, \stdClass $config, \stdClass $tc, \stdClass $ut)
     {
-        $this->path         =   $path;
+        $this->paths        =   $paths;
         $this->config       =   $config;
         $this->theme_config =   $tc;
         $this->ut_config    =   $ut;
         $this->twig         = new \Twig_Environment(
-            new \Twig_Loader_Filesystem("{$this->path['theme']}/twig")
+            new \Twig_Loader_Filesystem("{$this->paths['theme']}/twig")
         );
-        $this->addTwigFilter();
+        $this->twig = $this->addTwigFilter($this->twig);
     }
 
-    public function generate(string $url, string $to, bool $public)
+    /**
+     * generate site
+     * @param  string public|local
+     */
+    public function generate(string $type)
     {
-        $this->public       = $public;
-        $this->url          = rtrim($url, '/');
-        $this->root         = rtrim($to, '/');
-        $this->path['root'] = $this->root;
+        $this->public   = ($type === 'public' ? true : false);
+        $this->url      = $this->config->$type;
+        $this->root     = $this->paths[$type];
+        $this->paths['root'] = $this->root;
         $this->copyTheme();
         if (!isset(self::$articles)) {
-            ArticleGenerator::cacheArticle($this->path);
-            self::$articles = ArticleGenerator::getArticles($this->path);
+            ArticleGenerator::cacheArticle($this->paths);
+            self::$articles = ArticleGenerator::getArticles($this->paths);
             self::$tag_list = TagPageGenerator::getTagList(self::$articles);
         }
         $env = $this->getEnvironment();
-        IndexGenerator::generate($env, $this->config);
-        ArticleGenerator::generate($env, $this->config);
-        TagPageGenerator::generate($env, $this->config);
-        FeedGenerator::generate($env, $this->config);
-        UserPageGenerator::generate($env, $this->config);
-        ThemePageGenerator::generate($env, $this->config);
+        IndexGenerator::generate($env);
+        ArticleGenerator::generate($env);
+        TagPageGenerator::generate($env);
+        FeedGenerator::generate($env);
+        UserPageGenerator::generate($env);
+        ThemePageGenerator::generate($env);
     }
 
     /**
@@ -69,11 +73,12 @@ class SiteGenerator
         return new Maker(
             $this->config,
             self::$articles,
-            $this->path['contents'],
+            $this->paths['contents'],
             $this->theme_config,
             $this->ut_config,
             self::$tag_list,
-            $this->public
+            $this->public,
+            $this->url
         );
     }
 
@@ -83,16 +88,11 @@ class SiteGenerator
      */
     private function getEnvironment()
     {
-        $env = new \Hrgruri\Saori\Generator\Environment(
+        return new \Hrgruri\Saori\Generator\Environment(
             $this->getMaker(),
-            $this->twig
+            $this->twig,
+            $this->paths
         );
-        $env->paths         =   $this->path;
-        $env->url           =   $this->url;
-        $env->articles      =   self::$articles;
-        $env->theme_config  =   $this->theme_config;
-        $env->tag_list      =   self::$tag_list;
-        return $env;
     }
 
     private function getSubDirectory(string $path)
@@ -113,14 +113,14 @@ class SiteGenerator
 
     private function copyTheme()
     {
-        if (is_dir("{$this->path['theme']}/css")) {
-            self::copyDirectory("{$this->path['theme']}/css", "{$this->root}/css");
+        if (is_dir("{$this->paths['theme']}/css")) {
+            self::copyDirectory("{$this->paths['theme']}/css", "{$this->root}/css");
         }
-        if (is_dir("{$this->path['theme']}/js")) {
-            self::copyDirectory("{$this->path['theme']}/js", "{$this->root}/js");
+        if (is_dir("{$this->paths['theme']}/js")) {
+            self::copyDirectory("{$this->paths['theme']}/js", "{$this->root}/js");
         }
-        if (is_dir("{$this->path['theme']}/img")) {
-            self::copyDirectory("{$this->path['theme']}/img", "{$this->root}/img");
+        if (is_dir("{$this->paths['theme']}/img")) {
+            self::copyDirectory("{$this->paths['theme']}/img", "{$this->root}/img");
         }
     }
 
@@ -145,6 +145,7 @@ class SiteGenerator
 
     /**
      * @param  string   $file filename
+     * @throws Hrgruri\Saori\Exception\JsonException
      * @return mixed
      */
     public static function loadJson(string $file)
@@ -157,9 +158,9 @@ class SiteGenerator
         return $data;
     }
 
-    private function addTwigFilter()
+    private function addTwigFilter(\Twig_Environment $twig)
     {
-        $this->twig->addFilter(
+        $twig->addFilter(
             new \Twig_SimpleFilter('stdClass_to_array', function (\stdClass $std){
                 $result = [];
                 foreach ($std as $key => $value) {
@@ -168,5 +169,6 @@ class SiteGenerator
                 return $result;
             })
         );
+        return $twig;
     }
 }

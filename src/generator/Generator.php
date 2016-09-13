@@ -5,10 +5,7 @@ use cebe\markdown\GithubMarkdown;
 
 abstract class Generator
 {
-    abstract public static function generate(
-        Environment $env,
-        \stdClass $config
-    );
+    abstract public static function generate(Environment $env);
 
     /**
      * @param  string $path

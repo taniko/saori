@@ -44,8 +44,11 @@ class DraftCommand extends Command
                 )
             );
             $output->writeln("<info>generate (draft/{$name})</info>");
+            $result = 0;
         } catch (\Exception $e) {
+            $result = 1;
             $output->writeln("<error>{$e->getMessage()}</error>");
         }
+        return $result;
     }
 }

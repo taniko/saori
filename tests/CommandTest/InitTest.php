@@ -21,7 +21,7 @@ class InitTest extends TestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute(['command' => $command->getName()]);
         $data = json_decode(file_get_contents("{$this->root}/contents/config.json"));
-
+        $this->assertEquals(0, $commandTester->getStatusCode());
         $this->assertRegExp('/^done$/i', $commandTester->getDisplay());
         $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('contents'));
         $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('contents/config.json'));
@@ -35,8 +35,8 @@ class InitTest extends TestCase
         $command = $app->find('init');
         $commandTester = new CommandTester($command);
         $commandTester->execute(['command' => $command->getName()]);
-        $this->assertRegExp('/^done$/i', $commandTester->getDisplay());
+        $this->assertEquals(0, $commandTester->getStatusCode());
         $commandTester->execute(['command' => $command->getName()]);
-        $this->assertNotRegExp('/^done$/i', $commandTester->getDisplay());
+        $this->assertEquals(1, $commandTester->getStatusCode());
     }
 }

@@ -50,8 +50,11 @@ class InitCommand extends Command
                 )
             );
             $output->writeln('<info>done</info>');
+            $result = 0;
         } catch (\Exception $e) {
             $output->writeln("<error>{$e->getMessage()}</error>");
+            $result = 1;
         }
+        return $result;
     }
 }

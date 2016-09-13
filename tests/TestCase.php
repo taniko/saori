@@ -80,4 +80,28 @@ class TestCase extends \PHPUnit\Framework\TestCase
         $name = ltrim($name, '/');
         return "{$this->root}/$name";
     }
+
+    /**
+     * get configuration
+     * @return \stdClass
+     */
+    protected function getConfig() : \stdClass
+    {
+        return (object)[
+            'id'    =>  'username',
+            'local' =>  'http://localhost:8000',
+            'title' =>  'Sample Blog',
+            'author'=>  'John Doe',
+            'theme' =>  'saori',
+            'lang'  =>  'en',
+            'link'  =>  [
+                'github'    =>  'https://github.com',
+                'twitter'   =>  'https://twitter.com'
+            ],
+            'feed'  =>  [
+                'type'      =>  'atom',
+                'number'    =>  50
+            ]
+        ];
+    }
 }

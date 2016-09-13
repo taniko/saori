@@ -3,10 +3,8 @@ namespace Hrgruri\Saori\Generator;
 
 class IndexGenerator extends Generator
 {
-    public static function generate(
-        Environment $env,
-        \stdClass $config
-    ) {
+    public static function generate(Environment $env)
+    {
         $template   = $env->twig->loadTemplate('template/index.twig');
         $html = $template->render(array(
             'maker' => $env->maker
