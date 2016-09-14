@@ -51,6 +51,12 @@ class SiteGenerator
         $this->root     = $this->paths[$type];
         $this->paths['root'] = $this->root;
         $this->copyTheme();
+
+        // copy user files
+        if (is_dir("{$this->paths['contents']}/file")) {
+            self::copyDirectory("{$this->paths['contents']}/file", $this->root);
+        }
+        
         if (!isset(self::$articles)) {
             ArticleGenerator::cacheArticle($this->paths);
             self::$articles = ArticleGenerator::getArticles($this->paths);
