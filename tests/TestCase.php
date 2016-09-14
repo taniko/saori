@@ -87,7 +87,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
      */
     protected function getConfig() : \stdClass
     {
-        return (object)[
+        $config = (object)[
             'id'    =>  'username',
             'local' =>  'http://localhost:8000',
             'title' =>  'Sample Blog',
@@ -103,5 +103,11 @@ class TestCase extends \PHPUnit\Framework\TestCase
                 'number'    =>  50
             ]
         ];
+        foreach ($config as $key => $value) {
+            if (is_array($value)) {
+                $config->$key = (object)$value;
+            }
+        }
+        return $config;
     }
 }

@@ -1,21 +1,26 @@
 <?php
-namespace Hrgruri\Saori;
 
-class MakerTest extends \PHPUnit\Framework\TestCase
+use Hrgruri\Saori\Maker;
+
+class MakerTest extends TestCase
 {
+    private $maker;
+
     public function setUp()
     {
         parent::setUp();
-        $this->maker = new Maker(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            true,
-            'http://localhost:8000'
-        );
+        if (!isset($this->maker)) {
+            $this->maker = new Maker(
+                $this->getConfig(),
+                [],
+                "{$this->root}/contents",
+                new \stdClass,
+                new \stdClass,
+                [],
+                true,
+                'http://localhost:8000'
+            );
+        }
     }
 
     public function testIsPublic()

@@ -17,8 +17,16 @@ class Maker
     public  $noapp;
     public  $tag_list;
 
-    public function __construct($config, $article_list, $path, $tc, $ut, $tag_list, $public, string $url)
-    {
+    public function __construct(
+        \stdClass   $config,
+        array       $article_list,
+        string      $path,
+        \stdClass   $tc,
+        \stdClass   $ut,
+        array       $tag_list,
+        bool        $public,
+        string      $url
+    ) {
         $this->config           = $config;
         $this->article_list     = $article_list;
         $this->contents_path    = $path;
@@ -32,7 +40,9 @@ class Maker
 
     public function __get($name)
     {
-        if ($name === 'articles') {
+        if ($name === 'contents_path') {
+            throw new \LogicException('cannot access contents_path');
+        } elseif ($name === 'articles') {
             return $this->article_list;
         } elseif (isset($this->$name)) {
             return $this->$name;
