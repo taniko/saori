@@ -1,4 +1,6 @@
 # Saori
+[![Build Status](https://travis-ci.org/hrgruri/saori.svg?branch=ci)](https://travis-ci.org/hrgruri/saori)
+
 Saori is PHP static site generator for github.io
 
 ## Installation
