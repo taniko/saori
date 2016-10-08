@@ -34,6 +34,13 @@ php saori post first_article
 
 # generate static site
 php saori build
+
+cd username.github.io
+git init
+git remote add origin git@github.com:username/username.github.io.git
+git add --all
+git commit -m 'Initial commit'
+git push origin master
 ```
 
 ## Setting
