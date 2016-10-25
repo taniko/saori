@@ -2,9 +2,16 @@ language: php
 
 php:
     - 7.0
+    - 7.1
 
-before_script:
-    - composer install --dev
+sudo: false
+
+cache:
+    directories:
+        - $HOME/.composer/cache
+
+install:
+    - composer self-update && composer --version
 
 script:
-    - phpunit
+    - vendor/bin/phpunit
