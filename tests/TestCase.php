@@ -110,4 +110,25 @@ class TestCase extends \PHPUnit\Framework\TestCase
         }
         return $config;
     }
+
+    protected function getThemeConfig() : array
+    {
+        $theme_config = [
+            'color' => [
+                'main' => 'white'
+            ]
+        ];
+        $user_theme = [
+            'saori' => [
+                'color' => [
+                    'main' => 'black'
+                ]
+            ]
+        ];
+
+        return [
+            'theme' => json_decode(json_encode($theme_config)),
+            'user'  => json_decode(json_encode($user_theme))
+        ];
+    }
 }

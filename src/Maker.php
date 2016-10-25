@@ -215,25 +215,35 @@ class Maker
     /**
      * get user's theme config or theme config
      * @param  string $key
+     * @param  boolean $override
      * @return mixed
      */
-    public function theme(string $key)
+    public function theme(string $key, bool $override = true)
     {
-        return $this->ut_config->{$this->config->theme}->{$key}
-            ?? $this->theme_config->{$key}
-            ?? null;
+        if ($override == true) {
+            return $this->ut_config->{$this->config->theme}->{$key}
+                ?? $this->theme_config->{$key}
+                ?? null;
+        } else {
+            return $this->theme_config->{$key} ?? null;
+        }
     }
 
     /**
      * get user's theme color or theme color
      * @param  string $key
+     * @param  boolean $override 
      * @return mixed
      */
-    public function color(string $key)
+    public function color(string $key, bool $override = true)
     {
-        return $this->ut_config->{$this->config->theme}->color->{$key}
-            ?? $this->theme_config->color->{$key}
-            ?? null;
+        if ($override == true) {
+            return $this->ut_config->{$this->config->theme}->color->{$key}
+                ?? $this->theme_config->color->{$key}
+                ?? null;
+        } else {
+            return $this->theme_config->color->{$key} ?? null;
+        }
     }
 
     /**
