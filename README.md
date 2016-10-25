@@ -60,5 +60,20 @@ contents/config.json
 }
 ```
 
+contents/theme.json
+```json
+{
+    "saori": {
+        "color": {
+            "header"        : "#A9EEE6",
+            "title"         : "#F7FBFC",
+            "body"          : "#FEFAEC",
+            "page-contents" : "#FFF1CF"
+        },
+        "date-format" : "F j, Y"
+    }
+}
+```
+
 ***
 my [blog](https://hrgruri.github.io/) and [repository](https://github.com/hrgruri/blog)
