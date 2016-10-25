@@ -49,4 +49,31 @@ class MakerTest extends TestCase
             $this->assertTrue($flag, 'not catch LogicException');
         }
     }
+
+    public function testOverrideTheme()
+    {
+        $theme = $this->getThemeConfig();
+        $theme['theme']->color->main            = 'white';
+        $theme['theme']->{'date-format'}        = 'Y-m-d';
+        $theme['user']->saori->color->main      = 'black';
+        $theme['user']->saori->{'date-format'}  = 'F j, Y';
+
+        $maker = new Maker(
+            $this->getConfig(),
+            [],
+            "{$this->root}/contents",
+            $theme['theme'],
+            $theme['user'],
+            [],
+            true,
+            'http://localhost:8000'
+        );
+        $this->assertEquals('black', $maker->color('main'));
+        $this->assertEquals('black', $maker->color('main', true));
+        $this->assertEquals('white', $maker->color('main', false));
+
+        $this->assertEquals('F j, Y', $maker->theme('date-format'));
+        $this->assertEquals('F j, Y', $maker->theme('date-format', true));
+        $this->assertEquals('Y-m-d',  $maker->theme('date-format', false));
+    }
 }
