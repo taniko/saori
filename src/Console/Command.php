@@ -109,7 +109,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
      * @throws \Exception if failed loading configuration file
      * @return \stdClass
      */
-    private function getBlogConfig()
+    protected function getBlogConfig()
     {
         try {
             $result = SiteGenerator::loadJson("{$this->paths['contents']}/config.json");
