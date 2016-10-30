@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %}{{maker.config('title')}}{% endblock %}</title>
+        <title>{% block title %}{{maker.title}}{% endblock %}</title>
         {% if maker.isPublic() %}
             <script type="text/javascript">
                 if (location.protocol === 'http:') {
@@ -10,6 +10,7 @@
                 }
             </script>
         {% endif %}
+        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha256-/SIrNqv8h6QGKDuNoLGA4iret+kyesCkHGzVUUV0shc=" crossorigin="anonymous"></script>
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="/css/style.css">
@@ -17,6 +18,7 @@
         <link rel="stylesheet" href="/css/tag.css">
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/github.min.css">
         <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js"></script>
+        <script src="/js/share.js"></script>
         <script>hljs.initHighlightingOnLoad();</script>
         {% set ga_id = maker.config('google-analytics') %}
         {% if ga_id is not null %}

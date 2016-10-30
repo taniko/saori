@@ -1,6 +1,6 @@
 <article style="background: {{maker.color('main')}};">
     <span class="article-date">{{article.getDate(maker.theme('date-format'))}}</span>
-    <h1 class="article-title"><a href="{{article.link}}">{{article.title}}</a></h1>
+    <h1 class="article-title"><a href="{{maker.url}}{{article.link}}">{{article.title}}</a></h1>
     {% if article.tags|length > 0 %}
         <ul class="article-tags">
             {% for tag in article.tags %}
@@ -16,7 +16,10 @@
     <div class="article-share">
         {% set share_list = maker.config('share') %}
         {% if 'twitter' in share_list %}
-            <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="{{maker.url}}{{article.link}}" data-text="{{article.title}} - {{maker.title}}">Tweet</a>
+        {% endif %}
+        {% if 'pocket' in share_list %}
+            <a data-pocket-label="pocket" data-pocket-count="none" class="pocket-btn" data-lang="en" data-save-url="{{maker.url}}{{article.link}}"></a>
         {% endif %}
     </div>
 
@@ -25,13 +28,13 @@
             {% if not newer_article_link is empty %}
                 <div id="pager-next">
                     <div class="lines"><span>next article</span></div>
-                    <a href="{{newer_article_link}}">{{maker.getNewerArticle(article,1)[0].title}}</a>
+                    <a href="{{maker.url}}{{newer_article_link}}">{{maker.getNewerArticle(article,1)[0].title}}</a>
                 </div>
             {% endif %}
             {% if not older_article_link is empty %}
                 <div id="pager-prev">
                     <div class="lines"><span>previous article</span></div>
-                    <a href="{{older_article_link}}">{{maker.getOlderArticle(article,1)[0].title}}</a>
+                    <a href="{{maker.url}}{{older_article_link}}">{{maker.getOlderArticle(article,1)[0].title}}</a>
                 </div>
             {% endif %}
         </div>
