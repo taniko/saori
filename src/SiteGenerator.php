@@ -47,7 +47,7 @@ class SiteGenerator
     public function generate(string $type)
     {
         $this->public   = ($type === 'public' ? true : false);
-        $this->url      = $this->config->$type;
+        $this->url      = $this->public ? "https://{$this->config->id}.github.io" : $this->config->local;
         $this->root     = $this->paths[$type];
         $this->paths['root'] = $this->root;
         $this->copyTheme();

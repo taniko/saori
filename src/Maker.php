@@ -232,7 +232,7 @@ class Maker
     /**
      * get user's theme color or theme color
      * @param  string $key
-     * @param  boolean $override 
+     * @param  boolean $override
      * @return mixed
      */
     public function color(string $key, bool $override = true)
@@ -260,5 +260,23 @@ class Maker
     public function isLocal()
     {
         return !$this->isPublic();
+    }
+
+    /**
+     * site url
+     * @return string
+     */
+    public function url()
+    {
+        return $this->url;
+    }
+
+    /**
+     * site title
+     * @return string
+     */
+    public function title()
+    {
+        return $this->config->title;
     }
 }
