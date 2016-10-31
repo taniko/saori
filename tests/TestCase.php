@@ -131,4 +131,10 @@ class TestCase extends \PHPUnit\Framework\TestCase
             'user'  => json_decode(json_encode($user_theme))
         ];
     }
+
+    protected function getTester(string $name)
+    {
+        $app  = new Hrgruri\Saori\Application($this->root);
+        return new \Symfony\Component\Console\Tester\CommandTester($app->find($name));
+    }
 }

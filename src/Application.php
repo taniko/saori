@@ -12,5 +12,6 @@ class Application extends \Symfony\Component\Console\Application
         $this->add(new Console\BuildCommand($path));
         $this->add(new Console\PageCommand($path));
         $this->add(new Console\DeployCommand($path));
+        $this->add(new Console\ThemeCommand($path));
     }
 }
