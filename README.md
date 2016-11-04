@@ -4,15 +4,8 @@
 Saori is PHP static site generator for github.io
 
 ## Installation
-### Use hrgruri/saori-skeleton
 ```sh
 composer create-project hrgruri/saori-skeleton blog
-```
-### Use hrgruri/saori
-```sh
-mkdir blog
-cd blog
-composer require hrgruri/saori
 ```
 
 ## Usage
