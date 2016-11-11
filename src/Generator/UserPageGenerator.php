@@ -38,17 +38,16 @@ class UserPageGenerator extends Generator
         foreach ($img_list as $from) {
             self::copyFile(
                 $from,
-                $path_img.'/'.self::trimFilePath($from, $path_page)
+                $path_img.'/.page/'.self::trimFilePath($from, $path_page)
             );
         }
     }
 
     protected static function rewriteImagePath(string $file, string $path_page) : string
     {
-        return preg_replace(
-            '/\!\[.*\]\(([a-zA-Z0-9\-_\/]+\.[a-zA-Z]+)(\s+\"\w*\"|)\)/',
-            '![](/img/'. self::trimFilePath($file, $path_page,true) .'/../${1}${2})',
-            file_get_contents($file)
+        return parent::rewriteImagePath(
+            $file,
+            '/img/.page/'. self::trimFilePath($file, $path_page,true) .'/..'
         );
     }
 }

@@ -118,11 +118,11 @@ abstract class Generator
         }
     }
 
-    protected static function rewriteImagePath(string $file, string $path)
+    protected static function rewriteImagePath(string $file, string $path) : string
     {
         return preg_replace(
-            '/\!\[(.*)\]\(([a-zA-Z0-9\-_\/]+\.[a-zA-Z]+)(\s+\"\w*\"|)\)/',
-            '![${1}]('. $path .'/${2}${3})',
+            '/\!\[(.*)\]\(([a-zA-Z0-9\-_\/]+\.[a-zA-Z]+)(\s+\".*\"|)\)/',
+            '![${1}]('. rtrim($path, '/') .'/${2}${3})',
             file_get_contents($file)
         );
     }
