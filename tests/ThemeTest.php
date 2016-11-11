@@ -19,7 +19,7 @@ class ThemeTest extends TestCase
             foreach ($this->template_files as $template) {
                 $this->assertTrue(file_exists("{$dir}/twig/template/{$template}"));
             }
-            $this->assertTrue($this->validateJson("{$dir}/config.json"), "{$theme}/config.json does not exist or broken");
+            $this->assertTrue($this->validateJson("{$dir}/theme.json"), "{$theme}/theme.json does not exist or broken");
         }
     }
 

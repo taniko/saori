@@ -44,7 +44,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
 
         // load theme config
         try {
-            $data = SiteGenerator::loadJson(__DIR__ . "/../theme/{$config->theme}/config.json");
+            $data = SiteGenerator::loadJson(__DIR__ . "/../theme/{$config->theme}/theme.json");
         } catch (JsonException $e) {
             $data = new \stdClass;
         }

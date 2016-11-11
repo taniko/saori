@@ -33,6 +33,6 @@ class ThemeCommandTest extends TestCase
     {
         $tester = $this->getTester(self::NAME);
         $result = $tester->execute(['command' => self::NAME, 'name' =>'saori']);
-        $this->assertRegExp('/saori\/config\.json/', $tester->getDisplay());
+        $this->assertRegExp('/saori\/theme\.json/', $tester->getDisplay());
     }
 }

@@ -32,11 +32,11 @@ class ThemeCommand extends Command
             $output->writeln('<info>' . implode(', ', $list) .'</info>');
         } elseif (!file_exists("{$this->dir}/{$theme}")) {
             $output->writeln("<comment>{$theme} was not found</comment>");
-        } elseif (file_exists("{$this->dir}/{$theme}/config.json")) {
-            $output->writeln("<info>{$theme}/config.json</info>");
-            $output->writeln('<info>' . file_get_contents("{$this->dir}/{$theme}/config.json") .'</info>');
+        } elseif (file_exists("{$this->dir}/{$theme}/theme.json")) {
+            $output->writeln("<info>{$theme}/theme.json</info>");
+            $output->writeln('<info>' . file_get_contents("{$this->dir}/{$theme}/theme.json") .'</info>');
         } else {
-            $output->writeln("<info>{$theme} has not config.json</info>");
+            $output->writeln("<info>{$theme} has not theme.json</info>");
         }
     }
 
