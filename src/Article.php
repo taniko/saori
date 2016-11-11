@@ -8,11 +8,14 @@ class Article
     private $id;
     private $cache;
     private $timestamp;
-    public $title;
-    public $link;
-    public $newer_link;
-    public $older_link;
-    public $tags;
+    private $title;
+    private $link;
+    private $newer_link;
+    private $older_link;
+    private $tags;
+    private $allow_properties = [
+        'id', 'timestamp', 'title', 'link', 'newer_link', 'older_link', 'tags'
+    ];
 
     public function __construct(int $id, \stdClass $config, array $paths)
     {
@@ -24,6 +27,26 @@ class Article
         $this->link         = $paths['link'];
         $this->newer_link   = $paths['newer'];
         $this->older_link   = $paths['older'];
+    }
+
+    public function __get($name)
+    {
+        if (in_array($name, $this->allow_properties)) {
+            return $this->{$name};
+        } elseif ($name === 'html') {
+            return $this->html();
+        } else {
+            return null;
+        }
+    }
+
+    public function __isset($name)
+    {
+        if (in_array($name, $this->allow_properties) || $name === 'html') {
+            return true;
+        } else {
+            return null;
+        }
     }
 
     /**

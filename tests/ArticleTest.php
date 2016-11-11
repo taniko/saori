@@ -36,4 +36,17 @@ class ArticleTest extends TestCase
             $article->getDate('Y-m-d')
         );
     }
+
+    /**
+     * @test
+     */
+    public function get()
+    {
+        $config  = $this->createArticleConfig();
+        $article = $this->createArticle(null, null, $config);
+        $this->assertEquals($config->title, $article->title);
+        $this->assertEquals($config->timestamp, $article->timestamp);
+        $this->assertInternalType('array', $article->tags);
+        $this->assertInternalType('int', $article->id);
+    }
 }
