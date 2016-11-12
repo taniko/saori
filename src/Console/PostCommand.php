@@ -24,7 +24,11 @@ class PostCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $title  = $input->getArgument('title') ?? date('dHi');
+        if (is_null($input->getArgument('title'))) {
+            $title = file_exists("{$this->root}/draft/temp") ? 'temp' : date('dHi');
+        } else {
+            $title  = $input->getArgument('title');
+        }
         $source = "{$this->root}/draft/{$title}";
         $dest   = "{$this->paths['article']}/". date('Y/m')."/{$title}";
 
