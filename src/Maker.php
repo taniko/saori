@@ -4,6 +4,7 @@ namespace Hrgruri\Saori;
 use Hrgruri\Saori\Article;
 use Hrgruri\Saori\Exception\GeneratorException;
 use cebe\markdown\GithubMarkdown;
+use Illuminate\Support\Collection;
 
 class Maker
 {
@@ -19,11 +20,11 @@ class Maker
 
     public function __construct(
         \stdClass   $config,
-        array       $article_list,
+        Collection  $article_list,
         string      $path,
         \stdClass   $tc,
         \stdClass   $ut,
-        array       $tag_list,
+        Collection  $tag_list,
         bool        $public,
         string      $url
     ) {
@@ -158,9 +159,9 @@ class Maker
      * get tag list
      * @return array
      */
-    public function getTagList() : array
+    public function getTagList() : Collection
     {
-        return array_keys($this->tag_list);
+        return $this->tag_list->keys();
     }
 
 

@@ -3,6 +3,8 @@ namespace Hrgruri\Saori\Generator;
 
 class Environment
 {
+    const NOAPP = 10;
+    private $noapp;
     private $maker;
     private $twig;
     private $paths;
@@ -15,6 +17,8 @@ class Environment
         $this->maker    = $maker;
         $this->twig     = $twig;
         $this->paths    = $paths;
+        $noapp = $this->theme_config->noapp ?? self::NOAPP;
+        $this->noapp = (is_int($noapp) && $noapp > 0) ? $noapp : self::NOAPP;
     }
 
     /**

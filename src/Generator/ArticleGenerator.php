@@ -3,11 +3,10 @@ namespace Hrgruri\Saori\Generator;
 
 use Hrgruri\Saori\Article;
 use cebe\markdown\GithubMarkdown;
+use Illuminate\Support\Collection;
 
 class ArticleGenerator extends Generator
 {
-    const NOAPP         =   10;
-
     public static function generate(Environment $env)
     {
         self::copyDirectory(
@@ -19,39 +18,37 @@ class ArticleGenerator extends Generator
         if (!isset($tmp[0])) {
             return;
         }
-        foreach ($env->articles as $article) {
+        $env->articles->each(function ($article) use ($template, $env) {
             $html = $template->render(array(
                 'maker' => $env->maker,
                 'article' => $article
             ));
             self::putContents("{$env->paths['root']}/{$article->link}/index.html", $html);
-        }
+        });
 
         /*  generate articles page  */
         $template   = $env->twig->loadTemplate('template/articles.twig');
-        $noapp      = $env->theme_config->noapp ?? self::NOAPP;
-        $noapp      = (is_int($noapp) && $noapp > 0) ? $noapp : self::NOAPP;
-        for ($i = 1, $j = count($env->articles); $j > 0; $j = $j - $noapp, $i++) {
-            $articles      = array_slice($env->articles, ($i-1)*$noapp, $noapp);
+        $chunks     = $env->articles->chunk($env->noapp);
+        $last       = $chunks->count() - 1;
+        $chunks->each(function ($articles, $key) use ($template, $env, $last) {
             $html = $template->render(array(
                 'maker'     =>  $env->maker,
                 'articles'  =>  $articles,
-                'prev_page' =>  ($i != 1) ? '/page/'.(string)($i-1) : null,
-                'next_page' =>  ($j - $noapp > 0) ? '/page/'.(string)($i+1) : null
+                'prev_page' =>  $key == 0 ? null : "/page/{$key}",
+                'next_page' =>  $key == $last ? null : '/page/'. $key+1
             ));
-            self::putContents("{$env->paths['root']}/page/{$i}/index.html", $html);
-        }
+            self::putContents("{$env->paths['root']}/page/{$key}/index.html", $html);
+        });
     }
 
-    public static function getArticles(array $paths) : array {
+    public static function getArticles(array $paths) : Collection
+    {
         $infos = [];
         foreach(self::getFileList($paths['article'], ['md']) as $file) {
             try {
                 if (preg_match('/(.*)\/article\/(.*)\/article\.md/', $file, $m) !== 1
                     || !file_exists("{$m[1]}/config.json")
-                    || is_null($info = json_decode(
-                            file_get_contents("{$m[1]}/article/{$m[2]}/config.json"))
-                        )
+                    || is_null($info = json_decode(file_get_contents("{$m[1]}/article/{$m[2]}/config.json")))
                 ) {
                     continue;
                 } else {
@@ -84,7 +81,7 @@ class ArticleGenerator extends Generator
             );
             $i++;
         }
-        return $articles;
+        return Collection::make($articles);
     }
 
     public static function cacheArticle(array $paths)

@@ -56,7 +56,7 @@ class SiteGenerator
         if (is_dir("{$this->paths['contents']}/file")) {
             self::copyDirectory("{$this->paths['contents']}/file", $this->root);
         }
-        
+
         if (!isset(self::$articles)) {
             ArticleGenerator::cacheArticle($this->paths);
             self::$articles = ArticleGenerator::getArticles($this->paths);

@@ -2,11 +2,10 @@
 namespace Hrgruri\Saori\Generator;
 
 use Hrgruri\Saori\Article;
+use Illuminate\Support\Collection;
 
 class TagPageGenerator extends Generator
 {
-    const NOAPP         =   10;
-
     public static function generate(Environment $env)
     {
         $template   = $env->twig->loadTemplate('template/tags.twig');
@@ -15,13 +14,11 @@ class TagPageGenerator extends Generator
         ));
         self::putContents("{$env->paths['root']}/tag/index.html", $html);
         $template   = $env->twig->loadTemplate('template/articles.twig');
-        $noapp      = $env->theme_config->noapp ?? self::NOAPP;
-        $noapp      = (is_int($noapp) && $noapp > 0) ? $noapp : self::NOAPP;
         foreach ($env->tag_list as $tag => $tag_ids) {
             for ($i = 1; count($tag_ids) > 0; $i++) {
                 $articles   = [];
                 $ids        = [];
-                for ($j = 0; $j < $noapp; $j++) {
+                for ($j = 0; $j < $env->noapp; $j++) {
                     if (($id = array_shift($tag_ids)) === null) {
                         break;
                     }
@@ -44,7 +41,7 @@ class TagPageGenerator extends Generator
         }
     }
 
-    public static function getTagList(array $articles) : array
+    public static function getTagList(Collection $articles) : Collection
     {
         $tags = [];
         foreach ($articles as $article) {
@@ -53,6 +50,6 @@ class TagPageGenerator extends Generator
             }
         }
         ksort($tags, SORT_NATURAL);
-        return $tags;
+        return Collection::make($tags);
     }
 }

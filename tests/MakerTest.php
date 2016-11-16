@@ -1,6 +1,7 @@
 <?php
 
 use Hrgruri\Saori\Maker;
+use Illuminate\Support\Collection;
 
 class MakerTest extends TestCase
 {
@@ -12,11 +13,11 @@ class MakerTest extends TestCase
         if (!isset($this->maker)) {
             $this->maker = new Maker(
                 $this->getConfig(),
-                [],
+                Collection::make([]),
                 "{$this->root}/contents",
                 new \stdClass,
                 new \stdClass,
-                [],
+                Collection::make([]),
                 true,
                 'http://localhost:8000'
             );
@@ -60,11 +61,11 @@ class MakerTest extends TestCase
 
         $maker = new Maker(
             $this->getConfig(),
-            [],
+            Collection::make([]),
             "{$this->root}/contents",
             $theme['theme'],
             $theme['user'],
-            [],
+            Collection::make([]),
             true,
             'http://localhost:8000'
         );
