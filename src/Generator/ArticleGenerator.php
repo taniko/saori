@@ -31,12 +31,12 @@ class ArticleGenerator extends Generator
         $chunks     = $env->articles->chunk($env->noapp);
         $last       = $chunks->count() - 1;
         $chunks->each(function ($articles, $key) use ($template, $env, $last) {
-            $html = $template->render(array(
+            $html = $template->render([
                 'maker'     =>  $env->maker,
                 'articles'  =>  $articles,
                 'prev_page' =>  $key == 0 ? null : "/page/{$key}",
                 'next_page' =>  $key == $last ? null : '/page/'. $key+1
-            ));
+            ]);
             self::putContents("{$env->paths['root']}/page/{$key}/index.html", $html);
         });
     }

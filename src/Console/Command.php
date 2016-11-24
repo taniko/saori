@@ -58,8 +58,6 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
         }
         $this->ut_config = $data;
 
-        // $this->paths['public']  =   "{$this->root}/{$config->id}.github.io";
-        // $this->paths['theme']   =   __DIR__."/../theme/{$config->theme}";
         $this->config           =   $config;
         $this->config->public   = "https://{$this->config->id}.github.io";
     }
@@ -153,7 +151,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
      protected function updatePaths(array $paths, string $id, string $theme) : array
     {
         $paths['public']  =   "{$this->root}/{$id}.github.io";
-        $paths['theme']   =   __DIR__."/../theme/{$theme}";
+        $paths['theme']   =   realpath(__DIR__."/../theme/{$theme}");
         return $paths;
     }
 }
