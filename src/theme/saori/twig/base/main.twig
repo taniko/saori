@@ -33,10 +33,10 @@
         {% endif %}
         <link href="/feed.atom" rel="alternate" title="atom" type="application/atom+xml">
     </head>
-    <body style="background: {{maker.color('body')}};">
-        <div id="blog-header" style="background: {{maker.color('header')}};">
+    <body>
+        <div id="blog-header">
             <div class="container">
-                <h1 id="blog-title"><a href="/" style="color:{{maker.color('title')}};">{{maker.config('title')}}</a></h1>
+                <h1 id="blog-title"><a href="/">{{maker.config('title')}}</a></h1>
             </div>
         </div>
         <div class="container">
@@ -47,7 +47,7 @@
                 <div id="blog-side" class="col-xs-12 col-md-4">
                     {% set profile = maker.requireHtml('profile.md') %}
                     {% if profile is not null %}
-                        <div id="side-profile" style="background: {{maker.color('side')}};">
+                        <div id="side-profile">
                             <div class="side-title">プロフィール</div>
                             {{profile|raw}}
                         </div>
@@ -55,7 +55,7 @@
 
                     {% set links = (maker.config('link')|stdClass_to_array) %}
                     {% if links|length > 0 %}
-                        <div id="side-links" style="background: {{maker.color('side')}};">
+                        <div id="side-links">
                             <div class="side-title">リンク</div>
                             <ul>
                             {% for key,value in links %}
@@ -67,7 +67,7 @@
 
                     {% set recent_articles = maker.getNewestArticle(5) %}
                     {% if recent_articles|length > 0 %}
-                        <div id="side-recent" class="hidden-sm-down" style="background: {{maker.color('side')}};">
+                        <div id="side-recent" class="hidden-sm-down">
                             <div class="side-title">最新記事</div>
                             <ul>
                                 {% for article in recent_articles %}
@@ -79,7 +79,7 @@
 
                     {% set tags = maker.getTagList() %}
                     {% if tags|length > 0 %}
-                        <div id="side-tags" class=" hidden-sm-down" style="background: {{maker.color('side')}};">
+                        <div id="side-tags" class=" hidden-sm-down">
                             <div class="side-title">タグ</div>
                             <ul>
                             {% for tag in tags %}

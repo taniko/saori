@@ -1,17 +1,19 @@
 body {
+    background: {{maker.color('body')}};
     margin:0;
     word-wrap : break-word;
     overflow-wrap : break-word;
 }
 
 #blog-header {
+    background: {{maker.color('header')}};
     font-size: 32pt;
     margin-bottom: 20px;
 
 }
 
 #blog-title a{
-    color:#000000;
+    color:{{maker.color('title')}};
     text-decoration:none;
 }
 
@@ -74,6 +76,7 @@ nav.pager {
 
 /* side */
 [id^="side-"] {
+    background: {{maker.color('side')}};
     padding: 5px 10px;
     margin-bottom: 10px;
 }
@@ -117,6 +120,7 @@ nav.pager {
 }
 
 #page-contents {
+    background: {{maker.color('main')}};
     margin-bottom: 25px;
     padding-left: 5px;
     padding-right: 5px;
