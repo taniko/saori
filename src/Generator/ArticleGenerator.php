@@ -34,10 +34,10 @@ class ArticleGenerator extends Generator
             $html = $template->render([
                 'maker'     =>  $env->maker,
                 'articles'  =>  $articles,
-                'prev_page' =>  $key == 0 ? null : "/page/{$key}",
-                'next_page' =>  $key == $last ? null : '/page/'. $key+1
+                'prev_page' =>  $key == 0     ? null : '/page/' . $key,
+                'next_page' =>  $key == $last ? null : '/page/' . ($key+2)
             ]);
-            self::putContents("{$env->paths['root']}/page/{$key}/index.html", $html);
+            self::putContents("{$env->paths['root']}/page/" . ($key+1) . '/index.html', $html);
         });
     }
 
