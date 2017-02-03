@@ -18,7 +18,8 @@ class CommandTest extends TestCase
     {
         parent::setUp();
         if (!isset($this->instance)) {
-            $this->instance = new class($this->root) extends Command {};
+            $this->instance = new class($this->root) extends Command {
+            };
         }
     }
 

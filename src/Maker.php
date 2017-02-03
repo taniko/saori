@@ -14,9 +14,9 @@ class Maker
     private $ut_config;
     private $public;
     private $url;
-    public  $theme_config;
-    public  $noapp;
-    public  $tag_list;
+    public $theme_config;
+    public $noapp;
+    public $tag_list;
 
     public function __construct(
         \stdClass   $config,
@@ -68,7 +68,7 @@ class Maker
         $num    = $num > 0 ? $num : 1;
         $limit  = (count($this->article_list) < $num) ? count($this->article_list) : $num;
         $from   = strlen($this->contents_path);
-        for ($i = 0; $i < $limit ; $i++) {
+        for ($i = 0; $i < $limit; $i++) {
             $articles[] = $this->article_list[$i];
         }
         return $articles;

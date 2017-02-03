@@ -15,7 +15,9 @@ class GeneratorTest extends TestCase
     {
         parent::setUp();
         $this->instance = new class extends Generator {
-            public static function generate(\Hrgruri\Saori\Generator\Environment $env){}
+            public static function generate(\Hrgruri\Saori\Generator\Environment $env)
+            {
+            }
         };
     }
 

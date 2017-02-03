@@ -12,6 +12,7 @@ use hrgruri\saori\exception\{
     GeneratorException,
     JsonException
 };
+
 abstract class Command extends \Symfony\Component\Console\Command\Command
 {
     protected $root;
@@ -39,7 +40,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     protected function loadConfig()
     {
         // load site config
-        $config = $this->getBlogConfig();;
+        $config        = $this->getBlogConfig();
         $config->local = rtrim($config->local, '/');
 
         // load theme config
@@ -71,13 +72,13 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
             while (($file = readdir($dh)) !== false) {
                 if ($file === '.' || $file === '..') {
                     continue;
-                } elseif(($file === '.git' || $file === '.gitkeep') && $flag === true) {
+                } elseif (($file === '.git' || $file === '.gitkeep') && $flag === true) {
                     continue;
                 }
                 $path = "{$dir}/{$file}";
                 if (is_dir($path)) {
                     $this->clearDirectory($path, false);
-                }else{
+                } else {
                     unlink($path);
                 }
             }
@@ -148,7 +149,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
      * @param  string $theme theme name
      * @return array
      */
-     protected function updatePaths(array $paths, string $id, string $theme) : array
+    protected function updatePaths(array $paths, string $id, string $theme) : array
     {
         $paths['public']  =   "{$this->root}/{$id}.github.io";
         $paths['theme']   =   realpath(__DIR__."/../theme/{$theme}");

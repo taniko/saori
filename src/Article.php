@@ -70,7 +70,8 @@ class Article
      * @param  int $length
      * @return string
      */
-    public function striptags(int $length = null){
+    public function striptags(int $length = null)
+    {
         if (is_int($length) && $length > 0) {
             $result = mb_substr(strip_tags($this->html()), 0, $length);
         } else {

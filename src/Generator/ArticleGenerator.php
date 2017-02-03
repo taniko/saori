@@ -44,7 +44,7 @@ class ArticleGenerator extends Generator
     public static function getArticles(array $paths) : Collection
     {
         $infos = [];
-        foreach(self::getFileList($paths['article'], ['md']) as $file) {
+        foreach (self::getFileList($paths['article'], ['md']) as $file) {
             try {
                 if (preg_match('/(.*)\/article\/(.*)\/article\.md/', $file, $m) !== 1
                     || !file_exists("{$m[1]}/config.json")
@@ -86,7 +86,7 @@ class ArticleGenerator extends Generator
 
     public static function cacheArticle(array $paths)
     {
-        foreach(self::getFileList($paths['article'], ['md']) as $file) {
+        foreach (self::getFileList($paths['article'], ['md']) as $file) {
             if (preg_match('/(.*)\/article\/(.*)\/article\.md/', $file, $matched) !== 1) {
                 continue;
             }

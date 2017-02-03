@@ -24,7 +24,7 @@ class ThemePageGenerator extends Generator
             $html = $template->render(array(
                 'maker'     => $env->maker
             ));
-            self::putContents("{$env->paths['root']}/{$dir}/index.html",$html);
+            self::putContents("{$env->paths['root']}/{$dir}/index.html", $html);
         }
     }
 }

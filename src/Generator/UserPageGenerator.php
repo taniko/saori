@@ -8,7 +8,7 @@ class UserPageGenerator extends Generator
         static $file_list;
         static $img_list;
         if (!isset($file_list)) {
-            $file_list  = self::getFileList("{$env->paths['contents']}/page",['md']);
+            $file_list  = self::getFileList("{$env->paths['contents']}/page", ['md']);
             $img_list   = self::getFileList(
                 "{$env->paths['contents']}/page",
                 ['png', 'jpeg' , 'jpg']
@@ -29,7 +29,7 @@ class UserPageGenerator extends Generator
                 'maker'     => $env->maker,
                 'page_contents'  => $contents
             ));
-            self::putContents("{$env->paths['root']}/{$dir}/index.html",$html);
+            self::putContents("{$env->paths['root']}/{$dir}/index.html", $html);
         }
     }
 
@@ -47,7 +47,7 @@ class UserPageGenerator extends Generator
     {
         return parent::rewriteImagePath(
             $file,
-            '/img/.page/'. self::trimFilePath($file, $path_page,true) .'/..'
+            '/img/.page/'. self::trimFilePath($file, $path_page, true) .'/..'
         );
     }
 }

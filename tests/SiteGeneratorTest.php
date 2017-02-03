@@ -14,7 +14,7 @@ class SiteGeneratorTest extends TestCase
         $commandTester->execute(['command' => $command->getName()]);
     }
 
-    public function test_copyDirectory()
+    public function testCopyDirectory()
     {
         mkdir($this->file('contents/file/slide'), 0700, true);
         touch($this->file('contents/file/slide/app.index'));

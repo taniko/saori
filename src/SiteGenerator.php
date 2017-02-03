@@ -100,7 +100,7 @@ class SiteGenerator
     private function getSubDirectory(string $path)
     {
         $dirs = [];
-        if ( is_dir($path) && ($dh = opendir($path)) ) {
+        if (is_dir($path) && ($dh = opendir($path))) {
             while (($file = readdir($dh)) !== false) {
                 if ($file === '.' || $file === '..') {
                     continue;
@@ -154,7 +154,7 @@ class SiteGenerator
     {
         if (!file_exists($file)) {
             throw new JsonException("{$file} is not exits");
-        } elseif (is_null($data = json_decode(file_get_contents($file)))){
+        } elseif (is_null($data = json_decode(file_get_contents($file)))) {
             throw new JsonException("{$file} is broken");
         }
         return $data;
@@ -171,7 +171,7 @@ class SiteGenerator
     private function addTwigFilter(\Twig_Environment $twig) : \Twig_Environment
     {
         $twig->addFilter(
-            new \Twig_SimpleFilter('stdClass_to_array', function (\stdClass $std){
+            new \Twig_SimpleFilter('stdClass_to_array', function (\stdClass $std) {
                 $result = [];
                 foreach ($std as $key => $value) {
                     $result[$key] = $value;
@@ -220,7 +220,7 @@ class SiteGenerator
         foreach (self::$css_files['css'] as $source) {
             $dest = $to . substr($source, strlen($from));
             if (!is_dir(dirname($dest))) {
-                mkdir (dirname($dest, true));
+                mkdir(dirname($dest, true));
             }
             copy($source, $dest);
         }

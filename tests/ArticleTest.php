@@ -32,7 +32,7 @@ class ArticleTest extends TestCase
             $article->getDate()
         );
         $this->assertEquals(
-            date('Y-m-d',  $config->timestamp),
+            date('Y-m-d', $config->timestamp),
             $article->getDate('Y-m-d')
         );
     }
