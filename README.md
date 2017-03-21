@@ -1,5 +1,5 @@
 # Saori
-[![Build Status](https://travis-ci.org/hrgruri/saori.svg?branch=ci)](https://travis-ci.org/hrgruri/saori)
+[![Build Status](https://travis-ci.org/taniko/saori.svg?branch=ci)](https://travis-ci.org/taniko/saori)
 
 Saori is PHP static site generator for github.io
 
@@ -69,4 +69,4 @@ contents/theme.json
 ```
 
 ***
-my [blog](https://hrgruri.github.io/) and [repository](https://github.com/hrgruri/blog)
+my [blog](https://taniko.github.io/) and [repository](https://github.com/taniko/blog)
