@@ -2,5 +2,5 @@
 <?php
 require __DIR__.'/vendor/autoload.php';
 
-$app = new Hrgruri\Saori\Application(__DIR__);
+$app = new Taniko\Saori\Application(__DIR__.'/tests/asset/blog');
 $app->run();

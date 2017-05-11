@@ -1,0 +1,9 @@
+size: 5 # number of articles per page
+color:
+    header  : '#000033'
+    title   : '#EEEEEE'
+    body    : '#E9E9E9'
+    article : '#FFF1CF'
+    main    : white
+    side    : white
+date-format : "Y-m-d"

@@ -1,14 +1,16 @@
 <?php
-namespace Hrgruri\Saori\Generator;
+namespace Taniko\Saori\Generator;
+
+use Taniko\Saori\Util;
 
 class IndexGenerator extends Generator
 {
     public static function generate(Environment $env)
     {
         $template   = $env->twig->loadTemplate('template/index.twig');
-        $html = $template->render(array(
+        $html = $template->render([
             'maker' => $env->maker
-        ));
-        self::putContents("{$env->paths['root']}/index.html", $html);
+        ]);
+        Util::putContents("{$env->paths['root']}/index.html", $html);
     }
 }

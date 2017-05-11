@@ -1,10 +1,10 @@
 <?php
-namespace Hrgruri\Saori\Console;
+namespace Taniko\Saori\Console;
 
-use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputArgumet;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Taniko\Saori\Util;
 
 class InitCommand extends Command
 {
@@ -26,33 +26,29 @@ class InitCommand extends Command
             } elseif (is_dir($this->paths['contents'])) {
                 throw new \Exception("directory({$this->paths['contents']}) already exists");
             }
-            mkdir($this->paths['contents'], 0700, true);
-            file_put_contents(
-                "{$this->paths['contents']}/config.json",
-                json_encode(
-                    [
-                        'id'    =>  'username',
-                        'local' =>  'http://localhost:8000',
-                        'title' =>  'Sample Blog',
-                        'author'=>  'John Doe',
-                        'theme' =>  'saori',
-                        'lang'  =>  'en',
-                        'link'  =>  [
-                            'github'    =>  'https://github.com',
-                            'twitter'   =>  'https://twitter.com'
-                        ],
-                        'feed'  =>  [
-                            'type'      =>  'atom',
-                            'number'    =>  50
-                        ]
+            Util::putYamlContents(
+                "{$this->root}/config/env.yml",
+                [
+                    'title' =>  'Sample Blog',
+                    'author'=>  'John Doe',
+                    'local' =>  'http://localhost:8000',
+                    'public'=>  'http://localhost:8000',
+                    'theme' =>  'saori',
+                    'lang'  =>  'en',
+                    'link'  =>  [
+                        'GitHub'    =>  'https://github.com',
+                        'Twitter'   =>  'https://twitter.com'
                     ],
-                    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
-                )
+                    'feed'  =>  [
+                        'type'      =>  'atom',
+                        'number'    =>  50
+                    ]
+                ]
             );
             $output->writeln('<info>done</info>');
             $result = 0;
         } catch (\Exception $e) {
-            $output->writeln("<error>{$e->getMessage()}</error>");
+            $output->writeln("<error>{$e->getTraceAsString()}</error>");
             $result = 1;
         }
         return $result;

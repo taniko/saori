@@ -1,7 +1,7 @@
 <?php
 
 use Faker\Factory as Faker;
-use Hrgruri\Saori\Article;
+use Taniko\Saori\Article;
 
 class ArticleTest extends TestCase
 {

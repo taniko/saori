@@ -1,12 +1,12 @@
 <?php
-namespace Hrgruri\Saori\Console;
+namespace Taniko\Saori\Console;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Hrgruri\Saori\SiteGenerator;
-use hrgruri\saori\exception\GeneratorException;
+use Taniko\Saori\SiteGenerator;
+use Taniko\Saori\exception\GeneratorException;
 
 class DeployCommand extends Command
 {

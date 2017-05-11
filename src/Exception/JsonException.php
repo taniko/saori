@@ -1,5 +1,5 @@
 <?php
-namespace Hrgruri\Saori\Exception;
+namespace Taniko\Saori\Exception;
 
 class JsonException extends \Exception
 {

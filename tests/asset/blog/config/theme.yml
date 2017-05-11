@@ -1,0 +1,8 @@
+saori:
+    color:
+        header: '#A9EEE6'
+        title:  '#F7FBFC'
+        body:   '#FEFAEC'
+        page-contents: '#FFF1CF'
+    date-format: 'F j, Y'
+    size: 2

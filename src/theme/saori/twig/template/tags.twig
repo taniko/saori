@@ -4,7 +4,7 @@
     {% if maker.getTagList | length > 0 %}
         <ul id="tag-list">
             {% for tag in maker.getTagList %}
-                <li><a href="/tag/{{tag}}/1">{{tag}} ({{maker.tag_list[tag]|length}})</a></li>
+                <li><a href="/tag/{{tag}}/1">{{tag}} ({{maker.getTagListLength(tag)}})</a></li>
             {% endfor %}
         </ul>
     {% endif %}

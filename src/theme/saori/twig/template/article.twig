@@ -3,7 +3,7 @@
 {% block title %}{{article.title}} - {{maker.config('title')}}{% endblock %}
 
 {% block main_block %}
-    {% set newer_article_link = article.newer_link %}
-    {% set older_article_link = article.older_link %}
+    {% set newer_article = maker.getNewerArticles(article, 1).first() %}
+    {% set older_article = maker.getOlderArticles(article, 1).first() %}
     {% include 'base/article.twig' %}
 {% endblock %}

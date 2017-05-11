@@ -1,7 +1,8 @@
 <?php
-namespace Hrgruri\Saori\Console;
+namespace Taniko\Saori\Console;
 
-use Hrgruri\Saori\SiteGenerator;
+use Taniko\Saori\SiteGenerator;
+use Taniko\Saori\Util;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -34,7 +35,9 @@ class PostCommand extends Command
 
         try {
             if (preg_match('/^[\w-_]+$/', $title) !== 1) {
-                throw new \Exception("includes characters that cannot be used\n<comment>please enter a valid characters(a-z A-z 0-9 _ -)</comment>");
+                $str = "includes characters that cannot be used\n";
+                $str = '<comment>please enter a valid characters(a-z A-z 0-9 _ -)</comment>';
+                throw new \Exception($str);
             } elseif (is_dir($dest)) {
                 throw new \Exception("this title({$title}) already exist");
             }
@@ -47,22 +50,16 @@ class PostCommand extends Command
                 if (file_exists($dest)) {
                     throw new \Exception("this title({$title}) already exist");
                 }
-                SiteGenerator::copyDirectory($source, $dest);
+                Util::copyDirectory($source, $dest);
 
-                if (file_exists("{$dest}/config.json")) {
-                    $data = SiteGenerator::loadJson("{$dest}/config.json");
-                    $data->timestamp = time();
-                    file_put_contents(
-                        "{$dest}/config.json",
-                        json_encode(
-                            $data,
-                            JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
-                        )
-                    );
+                if (file_exists("{$dest}/config.yml")) {
+                    $data = Util::getYamlContents("{$dest}/config.yml");
+                    $data['timestamp'] = time();
+                    Util::putYamlContents("{$dest}/config.yml", $data);
                 } else {
                     $this->touchArticleConfig($dest, $title);
                 }
-                $this->clearDirectory($source);
+                Util::clearDirectory($source);
                 rmdir($source);
             } else {
                 mkdir($dest, 0700, true);
@@ -77,16 +74,13 @@ class PostCommand extends Command
 
     private function touchArticleConfig(string $dest, string $title)
     {
-        file_put_contents(
-            "{$dest}/config.json",
-            json_encode(
-                [
-                    "title"     =>  (string)$title,
-                    "tag"       =>  [],
-                    "timestamp"  =>  time()
-                ],
-                JSON_PRETTY_PRINT
-            )
+        return Util::putYamlContents(
+            "{$dest}/config.yml",
+            [
+                "title"     =>  (string)$title,
+                "tag"       =>  [],
+                "timestamp"  =>  time()
+            ]
         );
     }
 }

@@ -1,6 +1,6 @@
 <article>
-    <span class="article-date">{{article.getDate(maker.theme('date-format'))}}</span>
-    <h1 class="article-title"><a href="{{maker.url}}{{article.link}}">{{article.title}}</a></h1>
+    <span class="article-date">{{article.date(maker.theme('date-format'))}}</span>
+    <h1 class="article-title"><a href="{{article.url}}">{{article.title}}</a></h1>
     {% if article.tags|length > 0 %}
         <ul class="article-tags">
             {% for tag in article.tags %}
@@ -16,25 +16,25 @@
     <div class="article-share">
         {% set share_list = maker.config('share') %}
         {% if 'twitter' in share_list %}
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="{{maker.url}}{{article.link}}" data-text="{{article.title}} - {{maker.title}}">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="{{article.url}}" data-text="{{article.title}} - {{maker.title}}">Tweet</a>
         {% endif %}
         {% if 'pocket' in share_list %}
-            <a data-pocket-label="pocket" data-pocket-count="none" class="pocket-btn" data-lang="en" data-save-url="{{maker.url}}{{article.link}}"></a>
+            <a data-pocket-label="pocket" data-pocket-count="none" class="pocket-btn" data-lang="en" data-save-url="{{article.url}}"></a>
         {% endif %}
     </div>
 
-    {% if (not newer_article_link is empty) or (not older_article_link is empty) %}
+    {% if (not newer_article is empty) or (not older_article is empty) %}
         <div class="pager">
-            {% if not newer_article_link is empty %}
+            {% if not newer_article is empty %}
                 <div id="pager-next">
                     <div class="lines"><span>next article</span></div>
-                    <a href="{{maker.url}}{{newer_article_link}}">{{maker.getNewerArticle(article,1)[0].title}}</a>
+                    <a href="{{newer_article.url}}">{{newer_article.title}}</a>
                 </div>
             {% endif %}
-            {% if not older_article_link is empty %}
+            {% if not older_article is empty %}
                 <div id="pager-prev">
                     <div class="lines"><span>previous article</span></div>
-                    <a href="{{maker.url}}{{older_article_link}}">{{maker.getOlderArticle(article,1)[0].title}}</a>
+                    <a href="{{older_article.url}}">{{older_article.title}}</a>
                 </div>
             {% endif %}
         </div>

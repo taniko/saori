@@ -1,24 +1,24 @@
 <?php
-namespace Hrgruri\Saori\Generator;
+namespace Taniko\Saori\Generator;
 
 class Environment
 {
-    const NOAPP = 10;
-    private $noapp;
+    const SIZE = 10;
+    private $size;
     private $maker;
     private $twig;
     private $paths;
 
     public function __construct(
-        \Hrgruri\Saori\Maker $maker,
+        \Taniko\Saori\Maker $maker,
         \Twig_Environment $twig,
         array $paths
     ) {
         $this->maker    = $maker;
         $this->twig     = $twig;
         $this->paths    = $paths;
-        $noapp = $this->theme_config->noapp ?? self::NOAPP;
-        $this->noapp = (is_int($noapp) && $noapp > 0) ? $noapp : self::NOAPP;
+        $size = $this->maker->theme('size') ?? self::SIZE;
+        $this->size = (is_int($size) && $size > 0) ? $size : self::SIZE;
     }
 
     /**

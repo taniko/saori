@@ -1,15 +1,16 @@
 <?php
-namespace Hrgruri\Saori\Console;
+namespace Taniko\Saori\Console;
 
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Hrgruri\Saori\SiteGenerator;
-use hrgruri\saori\exception\GeneratorException;
+use Taniko\Saori\SiteGenerator;
+use Taniko\Saori\Util;
+use \Taniko\Saori\Generator\ArticleGenerator;
 
 class BuildCommand extends Command
 {
+    private $called;
     private $generator;
 
     protected function configure()
@@ -34,16 +35,9 @@ class BuildCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->called = false;
         try {
-            $this->loadConfig();
-            $this->paths = $this->updatePaths($this->paths, $this->config->id, $this->config->theme);
-            $this->generator = new SiteGenerator(
-                $this->paths,
-                $this->config,
-                $this->theme_config,
-                $this->ut_config
-            );
-            $this->clearDirectory($this->paths['cache']);
+            SiteGenerator::validate($this->config);
             if ($input->getOption('local')) {
                 $this->build('local');
                 $output->writeln('<info>generated local site</info>');
@@ -62,14 +56,34 @@ class BuildCommand extends Command
             $output->writeln("<error>{$e->getMessage()}</error>");
             $result = 1;
         } finally {
-            $this->clearDirectory($this->paths['cache']);
+            Util::clearDirectory($this->config->path('cache'));
         }
         return $result;
     }
 
+    /**
+     * build static site
+     * @param  string $type accepts public or local
+     * @throws \InvalidArgumentException
+     */
     private function build(string $type)
     {
-        $this->clearDirectory($this->paths[$type], true);
+        if (!in_array($type, ['public', 'local'])) {
+            throw new \InvalidArgumentException('type accepts public or local');
+        }
+        if (!$this->called) {
+            $url = $type === 'public' ? $this->config->env['public'] : $this->config->env['local'];
+            $url = rtrim($url, '/');
+            Util::clearDirectory($this->config->path('cache'));
+            $articles        = ArticleGenerator::getArticles($this->config->path('article'), $url);
+            $paths = $this->config->paths;
+            $articles->each(function ($article) use ($paths) {
+                $article->cache($paths['article'], "{$paths['cache']}/article");
+            });
+            $this->generator = new SiteGenerator($this->config, $articles);
+            $this->called    = true;
+        }
+        Util::clearDirectory($this->config->path($type), true);
         $this->generator->generate($type);
     }
 }

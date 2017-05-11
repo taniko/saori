@@ -1,0 +1,132 @@
+body {
+    background: {{maker.color('body')}};
+    margin:0;
+    word-wrap : break-word;
+    overflow-wrap : break-word;
+}
+
+#blog-header {
+    background: {{maker.color('header')}};
+    font-size: 32pt;
+    margin-bottom: 20px;
+
+}
+
+#blog-title a{
+    color:{{maker.color('title')}};
+    text-decoration:none;
+}
+
+#blog-title a:hover{
+    color:#000000;
+    text-decoration:underline;
+}
+
+/*  pager */
+nav > .previous {
+    font-size: x-large;
+    float: left;
+}
+
+nav > .next {
+    font-size: x-large;
+    float: right;
+}
+
+nav.pager {
+    padding-bottom: 10px;
+}
+
+.pager {
+    padding-top: 10px;
+}
+
+#pager-next {
+    text-align: center;
+}
+
+#pager-prev {
+    text-align: center;
+}
+
+.lines{
+  display: table;
+  text-align: center;
+  white-space: nowrap;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.lines:after, .lines:before {
+  content: '';
+  display: table-cell;
+  width: 50%;
+  background: linear-gradient(transparent 50%, currentColor 50%, currentColor calc(50% + 1px), transparent calc(50% + 1px));
+  -webkit-background-clip: padding;
+  background-clip: padding;
+}
+
+.lines:after {
+  border-left: 1em solid transparent;
+}
+
+.lines:before {
+  border-right: 1em solid transparent;
+}
+
+/* side */
+[id^="side-"] {
+    background: {{maker.color('side')}};
+    padding: 5px 10px;
+    margin-bottom: 10px;
+}
+
+.side-title {
+    border-bottom: dotted 1px #a7a7a7;
+    width: 100%;
+}
+
+[id^="side-"] ul {
+    padding-top: 10px;
+    margin-left: 0px;
+    padding-left: 0px;
+}
+
+[id^="side-"] li:before {
+    content: "\2771";
+    font-size: large;
+    margin-right: 10px;
+    color: #ccc;
+}
+
+[id^="side-"] li {
+    margin-left: 0px;
+    list-style-type: none;
+    padding-left: 10px;
+}
+
+[id^="side-"] li:last-child{
+    padding-left: 10px;
+}
+
+[id^="side-"] li a {
+    color:#000000;
+    text-decoration:none;
+}
+
+[id^="side-"] li a:hover{
+    color:black;
+    text-decoration:underline;
+}
+
+#page-contents {
+    background: {{maker.color('main')}};
+    margin-bottom: 25px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+}
+
+#page-contents img{
+    max-width: 100%;
+}

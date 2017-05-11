@@ -1,5 +1,8 @@
 <?php
 
+use Taniko\Saori\Generator\ArticleGenerator;
+use Taniko\Saori\Application;
+use Taniko\Saori\Util;
 use Faker\Factory as Faker;
 use org\bovigo\vfs\{
     vfsStream,
@@ -10,12 +13,15 @@ use org\bovigo\vfs\{
 class TestCase extends \PHPUnit\Framework\TestCase
 {
     protected $root;
+    protected $asset;
+    protected $url = 'http://localhost:8000';
 
     public function setUp()
     {
         vfsStreamWrapper::register();
-        vfsStreamWrapper::setRoot(new vfsStreamDirectory('saori'));
-        $this->root = vfsStream::url('saori');
+        vfsStreamWrapper::setRoot(new vfsStreamDirectory('blog'));
+        $this->root  = vfsStream::url('blog');
+        $this->asset = __DIR__.'/asset';
     }
     /**
      * @param  mixed    $instance
@@ -30,21 +36,34 @@ class TestCase extends \PHPUnit\Framework\TestCase
         return $method->invokeArgs($instance, $args);
     }
 
+    protected static function getProperty($object, $name)
+    {
+        $reflector = new ReflectionClass(get_class($object));
+        $property = $reflector->getProperty($name);
+        $property->setAccessible(true);
+        return $property->getValue($object);
+    }
+
+    protected function getApplication() : Application
+    {
+        return new Application($this->root);
+    }
+
     /**
      * @param  \Faker\Generator $faker
      * @param  int              $id
      * @param  stdClass         $config
      * @param  array            $paths
-     * @return \Hrgruri\Saori\Article
+     * @return \Taniko\Saori\Article
      */
-    protected function createArticle(
+    protected function makeArticle(
         \Faker\Generator $faker = null,
         int $id                 = null,
         \stdClass $config       = null,
         array $paths            = null
     ) {
         $faker = $faker ?? Faker::create();
-        $article = new \Hrgruri\Saori\Article(
+        $article = new \Taniko\Saori\Article(
             $id     ?? rand(),
             $config ?? $this->createArticleConfig($faker),
             $paths  ?? ([
@@ -61,7 +80,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
      * @param  \Faker\Generator $faker
      * @return stdClass
      */
-    protected function createArticleConfig(\Faker\Generator $faker = null) : \stdClass
+    protected function makeArticleConfig(\Faker\Generator $faker = null) : \stdClass
     {
         $faker  = $faker ?? Faker::create();
         $config = new \stdClass;
@@ -81,60 +100,20 @@ class TestCase extends \PHPUnit\Framework\TestCase
         return "{$this->root}/$name";
     }
 
-    /**
-     * get configuration
-     * @return \stdClass
-     */
-    protected function getConfig() : \stdClass
-    {
-        $config = (object)[
-            'id'    =>  'username',
-            'local' =>  'http://localhost:8000',
-            'title' =>  'Sample Blog',
-            'author'=>  'John Doe',
-            'theme' =>  'saori',
-            'lang'  =>  'en',
-            'link'  =>  [
-                'github'    =>  'https://github.com',
-                'twitter'   =>  'https://twitter.com'
-            ],
-            'feed'  =>  [
-                'type'      =>  'atom',
-                'number'    =>  50
-            ]
-        ];
-        foreach ($config as $key => $value) {
-            if (is_array($value)) {
-                $config->$key = (object)$value;
-            }
-        }
-        return $config;
-    }
-
-    protected function getThemeConfig() : array
-    {
-        $theme_config = [
-            'color' => [
-                'main' => 'white'
-            ]
-        ];
-        $user_theme = [
-            'saori' => [
-                'color' => [
-                    'main' => 'black'
-                ]
-            ]
-        ];
-
-        return [
-            'theme' => json_decode(json_encode($theme_config)),
-            'user'  => json_decode(json_encode($user_theme))
-        ];
-    }
-
     protected function getTester(string $name)
     {
-        $app  = new Hrgruri\Saori\Application($this->root);
+        $app  = new Taniko\Saori\Application($this->root);
         return new \Symfony\Component\Console\Tester\CommandTester($app->find($name));
+    }
+
+    protected function copyAsset()
+    {
+        Util::copyDirectory("{$this->asset}/blog", $this->root);
+    }
+
+    protected function getArticlesByAsset()
+    {
+        $paths = ArticleGenerator::collectArticlePaths("{$this->root}/contents/article");
+        return ArticleGenerator::createArticles($paths, $this->url);
     }
 }

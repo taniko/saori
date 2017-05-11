@@ -1,6 +1,6 @@
 <?php
 
-use Hrgruri\Saori\SiteGenerator;
+use Taniko\Saori\SiteGenerator;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class SiteGeneratorTest extends TestCase
@@ -8,7 +8,7 @@ class SiteGeneratorTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $app = new Hrgruri\Saori\Application($this->root);
+        $app = new Taniko\Saori\Application($this->root);
         $command = $app->find('init');
         $commandTester = new CommandTester($command);
         $commandTester->execute(['command' => $command->getName()]);

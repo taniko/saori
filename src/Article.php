@@ -1,32 +1,32 @@
 <?php
-namespace Hrgruri\Saori;
+namespace Taniko\Saori;
 
 use cebe\markdown\GithubMarkdown;
+use Taniko\Saori\Util;
 
 class Article
 {
+    private $url;
     private $id;
     private $cache;
     private $timestamp;
     private $title;
     private $link;
-    private $newer_link;
-    private $older_link;
+    private $newer_article;
+    private $older_article;
     private $tags;
     private $allow_properties = [
-        'id', 'timestamp', 'title', 'link', 'newer_link', 'older_link', 'tags'
+        'id', 'timestamp', 'title', 'link', 'newer_article', 'older_article', 'tags', 'url'
     ];
 
-    public function __construct(int $id, \stdClass $config, array $paths)
+    public function __construct(int $id, array $data, $url)
     {
         $this->id           = $id;
-        $this->title        = $config->title;
-        $this->tags         = $config->tag ?? [];
-        $this->timestamp    = $config->timestamp;
-        $this->cache        = $paths['cache'];
-        $this->link         = $paths['link'];
-        $this->newer_link   = $paths['newer'];
-        $this->older_link   = $paths['older'];
+        $this->timestamp    = $data['config']['timestamp'];
+        $this->title        = $data['config']['title'];
+        $this->tags         = $data['config']['tag'] ?? [];
+        $this->link         = $data['link'];
+        $this->url          = "{$url}/article{$this->link}";
     }
 
     public function __get($name)
@@ -49,21 +49,18 @@ class Article
         }
     }
 
-    /**
-     * get article id
-     * @return int
-     */
-    public function getId()
+    public function setOlderArticle(Article $article)
     {
-        return $this->id;
+        if (!isset($this->older_article)) {
+            $this->older_article = $article;
+        }
     }
 
-    /**
-     * @return int
-     */
-    public function getTimestamp()
+    public function setNewerArticle(Article $article)
     {
-        return $this->timestamp;
+        if (!isset($this->newer_article)) {
+            $this->newer_article = $article;
+        }
     }
 
     /**
@@ -80,7 +77,7 @@ class Article
         return $result;
     }
 
-    public function getDate(string $format = 'F j, Y')
+    public function date(string $format = 'F j, Y')
     {
         return date($format, $this->timestamp);
     }
@@ -92,5 +89,19 @@ class Article
     public function html() : string
     {
         return file_get_contents("{$this->cache}/article.html");
+    }
+
+    /**
+     * cacheing article html
+     */
+    public function cache($source, $dist)
+    {
+        $this->cache = "{$dist}{$this->link}";
+        $file = "{$source}{$this->link}/article.md";
+        $dist = "{$dist}{$this->link}/article.html";
+        Util::putContents(
+            $dist,
+            (new GithubMarkdown)->parse(Util::rewriteImagePath($file, "/article{$this->link}"))
+        );
     }
 }

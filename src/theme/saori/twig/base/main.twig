@@ -36,7 +36,7 @@
     <body>
         <div id="blog-header">
             <div class="container">
-                <h1 id="blog-title"><a href="/">{{maker.config('title')}}</a></h1>
+                <h1 id="blog-title"><a href="/">{{maker.env('title')}}</a></h1>
             </div>
         </div>
         <div class="container">
@@ -45,7 +45,7 @@
                     {% block main_block %}{% endblock %}
                 </div>
                 <div id="blog-side" class="col-xs-12 col-md-4">
-                    {% set profile = maker.requireHtml('profile.md') %}
+                    {% set profile = maker.markdown('profile.md') %}
                     {% if profile is not null %}
                         <div id="side-profile">
                             <div class="side-title">プロフィール</div>
@@ -53,7 +53,7 @@
                         </div>
                     {% endif %}
 
-                    {% set links = (maker.config('link')|stdClass_to_array) %}
+                    {% set links = maker.env('link') %}
                     {% if links|length > 0 %}
                         <div id="side-links">
                             <div class="side-title">リンク</div>
@@ -83,7 +83,7 @@
                             <div class="side-title">タグ</div>
                             <ul>
                             {% for tag in tags %}
-                                <li><a href="/tag/{{tag}}/1">{{tag}} ({{maker.tag_list[tag]|length}})</a></li>
+                                <li><a href="/tag/{{tag}}/1">{{tag}} ({{maker.getTagListLength(tag)}})</a></li>
                             {% endfor %}
                             </ul>
                         </div>

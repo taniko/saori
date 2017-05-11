@@ -1,5 +1,7 @@
 <?php
-namespace Hrgruri\Saori\Generator;
+namespace Taniko\Saori\Generator;
+
+use Taniko\Saori\Util;
 
 class UserPageGenerator extends Generator
 {
@@ -8,8 +10,8 @@ class UserPageGenerator extends Generator
         static $file_list;
         static $img_list;
         if (!isset($file_list)) {
-            $file_list  = self::getFileList("{$env->paths['contents']}/page", ['md']);
-            $img_list   = self::getFileList(
+            $file_list  = Util::getFileList("{$env->paths['contents']}/page", ['md']);
+            $img_list   = Util::getFileList(
                 "{$env->paths['contents']}/page",
                 ['png', 'jpeg' , 'jpg']
             );
@@ -25,18 +27,18 @@ class UserPageGenerator extends Generator
                 self::rewriteImagePath($file, "{$env->paths['contents']}/page")
             );
             $dir = self::trimFilePath($file, "{$env->paths['contents']}/page", true);
-            $html = $template->render(array(
-                'maker'     => $env->maker,
+            $html = $template->render([
+                'maker'          => $env->maker,
                 'page_contents'  => $contents
-            ));
-            self::putContents("{$env->paths['root']}/{$dir}/index.html", $html);
+            ]);
+            Util::putContents("{$env->paths['root']}/{$dir}/index.html", $html);
         }
     }
 
     private static function copyImage(array $img_list, string $path_img, string $path_page)
     {
         foreach ($img_list as $from) {
-            self::copyFile(
+            Util::copyFile(
                 $from,
                 $path_img.'/.page/'.self::trimFilePath($from, $path_page)
             );

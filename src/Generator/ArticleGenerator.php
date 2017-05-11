@@ -1,102 +1,91 @@
 <?php
-namespace Hrgruri\Saori\Generator;
+namespace Taniko\Saori\Generator;
 
-use Hrgruri\Saori\Article;
 use cebe\markdown\GithubMarkdown;
 use Illuminate\Support\Collection;
+use Taniko\Saori\{
+    Article,
+    Util
+};
 
 class ArticleGenerator extends Generator
 {
     public static function generate(Environment $env)
     {
-        self::copyDirectory(
+        Util::copyDirectory(
             $env->paths['article'],
             "{$env->paths['root']}/article"
         );
         $template   = $env->twig->loadTemplate('template/article.twig');
-        $tmp        = $env->maker->getNewestArticle();
-        if (!isset($tmp[0])) {
+        if ($env->articles->count() === 0) {
             return;
         }
         $env->articles->each(function ($article) use ($template, $env) {
-            $html = $template->render(array(
+            $html = $template->render([
                 'maker' => $env->maker,
                 'article' => $article
-            ));
-            self::putContents("{$env->paths['root']}/{$article->link}/index.html", $html);
+            ]);
+            Util::putContents("{$env->paths['root']}/article{$article->link}/index.html", $html);
         });
 
         /*  generate articles page  */
         $template   = $env->twig->loadTemplate('template/articles.twig');
-        $chunks     = $env->articles->chunk($env->noapp);
+        $chunks     = $env->articles->reverse()->chunk($env->size);
         $last       = $chunks->count() - 1;
         $chunks->each(function ($articles, $key) use ($template, $env, $last) {
             $html = $template->render([
                 'maker'     =>  $env->maker,
                 'articles'  =>  $articles,
-                'prev_page' =>  $key == 0     ? null : '/page/' . $key,
-                'next_page' =>  $key == $last ? null : '/page/' . ($key+2)
+                'prev_page' =>  $key == 0     ? null : "{$env->maker->url}/page/{$key}",
+                'next_page' =>  $key == $last ? null : "{$env->maker->url}/page/".($key+2)
             ]);
-            self::putContents("{$env->paths['root']}/page/" . ($key+1) . '/index.html', $html);
+            Util::putContents("{$env->paths['root']}/page/" . ($key+1) . '/index.html', $html);
         });
     }
 
-    public static function getArticles(array $paths) : Collection
+    public static function getArticles(string $dir, string $url)
     {
-        $infos = [];
-        foreach (self::getFileList($paths['article'], ['md']) as $file) {
-            try {
-                if (preg_match('/(.*)\/article\/(.*)\/article\.md/', $file, $m) !== 1
-                    || !file_exists("{$m[1]}/config.json")
-                    || is_null($info = json_decode(file_get_contents("{$m[1]}/article/{$m[2]}/config.json")))
-                ) {
-                    continue;
-                } else {
-                    $infos[] = [
-                        'path'      => "/article/{$m[2]}",
-                        'timestamp' => $info->timestamp,
-                        'title'     => $info->title
-                    ];
-                }
-            } catch (\Exception $e) {
-                continue;
-            }
-        }
-        usort($infos, function ($a, $b) {
-            return $b['timestamp'] <=> $a['timestamp']
-                ?: strnatcmp($a['title'], $b['title']);
-        });
-        $articles = [];
-        $i = 0;
-        foreach ($infos as $info) {
-            $articles[] = new Article(
-                $i,
-                json_decode(file_get_contents("{$paths['contents']}{$info['path']}/config.json")),
-                [
-                    'cache' =>  "{$paths['cache']}{$info['path']}",
-                    'link'  =>  $info['path'],
-                    'newer' =>  isset($infos[$i -1]) ? $infos[$i -1]['path'] : null,
-                    'older' =>  isset($infos[$i +1]) ? $infos[$i +1]['path'] : null
-                ]
-            );
-            $i++;
-        }
-        return Collection::make($articles);
+        return self::createArticles(self::collectArticlePaths($dir), $url);
     }
 
-    public static function cacheArticle(array $paths)
+    /**
+     * collect article paths
+     * @param  string     $root path of contents/articles
+     * @return Collection       article paths
+     */
+    public static function collectArticlePaths(string $root) : Collection
     {
-        foreach (self::getFileList($paths['article'], ['md']) as $file) {
-            if (preg_match('/(.*)\/article\/(.*)\/article\.md/', $file, $matched) !== 1) {
-                continue;
+        return Collection::make(Util::getFileList($root, ['md']))->map(function ($item) {
+            return
+                preg_match('/(.*)\/([0-9]{4}\/[0-9]{2}\/\w+)\/article\.md$/', $item, $m) === 1
+                    && file_exists("{$m[1]}/{$m[2]}/config.yml")
+                ? ['path' => "{$m[1]}/{$m[2]}", 'link' => "/{$m[2]}"]
+                : null;
+        })->filter();
+    }
+
+    /**
+     * create article instances by paths
+     * @param  Collection $items article paths
+     * @return Collection        article instances
+     */
+    public static function createArticles(Collection $items, $url) : Collection
+    {
+        return $items->map(function ($item) {
+            $config = Util::getYamlContents("{$item['path']}/config.yml");
+            return [
+                'link'   => $item['link'],
+                'path'   => $item['path'],
+                'config' => $config
+            ];
+        })->sort(function ($first, $second) {
+            if ($first['config']['timestamp'] === $second['config']['timestamp']) {
+                return strnatcmp($first['config']['title'], $second['config'['title']]);
+            } else {
+                return $first['config']['timestamp'] < $second['config']['timestamp'] ? -1 : 1;
             }
-            if (!is_dir("{$paths['cache']}/article/$matched[2]}")) {
-                mkdir("{$paths['cache']}/article/{$matched[2]}", 0700, true);
-                file_put_contents(
-                    "{$paths['cache']}/article/{$matched[2]}/article.html",
-                    (new GithubMarkdown)->parse(self::rewriteImagePath($file, "/article/{$matched[2]}"))
-                );
-            }
-        }
+        })->values()->map(function ($data, $key) use ($url) {
+            return new Article($key, $data, $url);
+        });
     }
 }

@@ -1,31 +1,32 @@
 <?php
-namespace Hrgruri\Saori\Generator;
+namespace Taniko\Saori\Generator;
 
-use Hrgruri\Saori\Article;
+use Taniko\Saori\Article;
+use Taniko\Saori\Util;
 use FeedWriter\{Item, ATOM, Feed};
 
 class FeedGenerator extends Generator
 {
-    const FEED_NUMBER   =   100;
+    const FEED_SIZE = 100;
 
     public static function generate(Environment $env)
     {
         $atom = new ATOM;
-        $atom->setTitle($env->config->title);
-        $atom->setLink($env->url);
+        $atom->setTitle($env->maker->env('title'));
+        $atom->setLink($env->maker->url);
         $atom->setDate(new \DateTime());
-        $number = $env->config->feed->number ?? self::FEED_NUMBER;
-        $number = is_int($number) && $number > 0 ? $number : self::FEED_NUMBER;
-        for ($i = 0; $i < $number && $i < count($env->articles); $i++) {
-            $article    = $env->articles[$i];
-            $item       = $atom->createNewItem() ;
-            $item->setAuthor($env->config->author);
+        $size = $env->maker->env('feed.size') ?? self::FEED_SIZE;
+        $size = is_int($size) && $size > 0 ? $size : self::FEED_SIZE;
+        $articles = $env->maker->articles->reverse()->take($size)->values();
+        foreach ($articles as $key => $article) {
+            $item = $atom->createNewItem() ;
+            $item->setAuthor($env->maker->env('author'));
             $item->setTitle($article->title);
-            $item->setLink($article->link);
-            $item->setDate($article->getTimestamp());
+            $item->setLink($article->url);
+            $item->setDate($article->timestamp);
             $item->setDescription($article->html());
             $atom->addItem($item);
         }
-        self::putContents("{$env->paths['root']}/feed.atom", $atom->generateFeed());
+        Util::putContents("{$env->paths['root']}/feed.atom", $atom->generateFeed());
     }
 }

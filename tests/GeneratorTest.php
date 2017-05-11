@@ -1,6 +1,6 @@
 <?php
 
-use Hrgruri\Saori\Generator\Generator;
+use Taniko\Saori\Generator\Generator;
 use org\bovigo\vfs\{
     vfsStream,
     vfsStreamWrapper,
@@ -15,7 +15,7 @@ class GeneratorTest extends TestCase
     {
         parent::setUp();
         $this->instance = new class extends Generator {
-            public static function generate(\Hrgruri\Saori\Generator\Environment $env)
+            public static function generate(\Taniko\Saori\Generator\Environment $env)
             {
             }
         };

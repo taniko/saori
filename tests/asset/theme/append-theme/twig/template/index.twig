@@ -1,0 +1,12 @@
+{% extends 'base/main.twig' %}
+
+{% block main_block %}
+    {% for article in maker.getNewestArticle(maker.theme_config.size) %}
+        {% include 'base/article.twig' %}
+    {% endfor %}
+    <nav class="pager">
+        {% if maker.existsNewerArticlePage(1) > 0 %}
+            <div class="next"><a href="/page/2">next &raquo;</a></div>
+        {% endif %}
+    </nav>
+{% endblock %}

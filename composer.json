@@ -1,16 +1,19 @@
 {
-    "name": "hrgruri/saori",
-    "description": "blog tool for user_name.github.io",
+    "name": "taniko/saori",
+    "description": "static site generator",
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Hrgruri\\Saori\\":"src"
+            "Taniko\\Saori\\":"src"
         }
     },
     "autoload-dev": {
         "classmap": [
             "tests/TestCase.php"
-        ]
+        ],
+        "psr-4": {
+            "Test\\":"tests"
+        }
     },
     "require": {
         "php": ">=7.0.0",
@@ -20,7 +23,8 @@
         "mibe/feedwriter": "^1.0",
         "symfony/console": "^3.1",
         "illuminate/validation": "^5.3",
-        "illuminate/support": "^5.3"
+        "illuminate/support": "^5.3",
+        "symfony/yaml": "^3.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.5",

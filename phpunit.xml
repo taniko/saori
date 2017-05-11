@@ -2,10 +2,16 @@
 
 <phpunit
     colors="true"
-    bootstrap="src/bootstrap/autoload.php"
+    bootstrap="tests/bootstrap/autoload.php"
     backupGlobals="false">
 
-    <testsuite name="saori tests">
-        <directory>tests/</directory>
+    <testsuite name="unit tests">
+        <directory>tests/Unit</directory>
+    </testsuite>
+    <testsuite name="command tests">
+        <directory>tests/Command</directory>
+    </testsuite>
+    <testsuite name="generator tests">
+        <directory>tests/Generator</directory>
     </testsuite>
 </phpunit>

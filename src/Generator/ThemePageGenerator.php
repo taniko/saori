@@ -1,5 +1,7 @@
 <?php
-namespace Hrgruri\Saori\Generator;
+namespace Taniko\Saori\Generator;
+
+use Taniko\Saori\Util;
 
 class ThemePageGenerator extends Generator
 {
@@ -8,8 +10,8 @@ class ThemePageGenerator extends Generator
         static $files;
         static $twig_files;
         if (!isset($twig_files)) {
-            $twig_files = self::getFileList("{$env->paths['theme']}/twig/page", ['twig']);
-            $files      = self::getFileList("{$env->paths['theme']}/twig/page");
+            $twig_files = Util::getFileList("{$env->paths['theme']}/twig/page", ['twig']);
+            $files      = Util::getFileList("{$env->paths['theme']}/twig/page");
             $files = array_values(array_diff($files, $twig_files));
         }
         foreach ($files as $file) {
@@ -21,10 +23,10 @@ class ThemePageGenerator extends Generator
         foreach ($twig_files as $twig_file) {
             $dir = self::trimFilePath($twig_file, "{$env->paths['theme']}/twig/page", true);
             $template   = $env->twig->loadTemplate("page/{$dir}.twig");
-            $html = $template->render(array(
+            $html = $template->render([
                 'maker'     => $env->maker
-            ));
-            self::putContents("{$env->paths['root']}/{$dir}/index.html", $html);
+            ]);
+            Util::putContents("{$env->paths['root']}/{$dir}/index.html", $html);
         }
     }
 }

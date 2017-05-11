@@ -1,7 +1,7 @@
 <?php
-namespace Hrgruri\Saori\Console;
+namespace Taniko\Saori\Console;
 
-use Hrgruri\Saori\SiteGenerator;
+use Taniko\Saori\SiteGenerator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -26,33 +26,18 @@ class ThemeCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $theme  = $input->getArgument('name');
-        $list   = $this->getThemeList();
+        $list   = $this->config->themes;
+        $names  = array_keys($list);
         if (is_null($theme)) {
             $output->writeln('<info>Theme list</info>');
-            $output->writeln('<info>' . implode(', ', $list) .'</info>');
-        } elseif (!file_exists("{$this->dir}/{$theme}")) {
+            $output->writeln('<info>' . implode(', ', $names) .'</info>');
+        } elseif (!in_array($theme, $names)) {
             $output->writeln("<comment>{$theme} was not found</comment>");
-        } elseif (file_exists("{$this->dir}/{$theme}/theme.json")) {
-            $output->writeln("<info>{$theme}/theme.json</info>");
-            $output->writeln('<info>' . file_get_contents("{$this->dir}/{$theme}/theme.json") .'</info>');
+        } elseif (file_exists("{$list[$theme]}/setting.yml")) {
+            $output->writeln("<info># {$theme}/setting.yml\n</info>");
+            $output->writeln('<info>' . file_get_contents("{$list[$theme]}/setting.yml") .'</info>');
         } else {
-            $output->writeln("<info>{$theme} has not theme.json</info>");
+            $output->writeln("<info>{$theme} has not setting.yml</info>");
         }
-    }
-
-    private function getThemeList() : array
-    {
-        $result = [];
-        if (is_dir($this->dir) && ($dh = opendir($this->dir))) {
-            while (($file = readdir($dh)) !== false) {
-                if ($file === '.' || $file === '..') {
-                    continue;
-                } elseif (is_dir("{$this->dir}/{$file}")) {
-                    $result[] = $file;
-                }
-            }
-            closedir($dh);
-        }
-        return $result;
     }
 }

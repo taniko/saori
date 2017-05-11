@@ -1,12 +1,13 @@
 <?php
-namespace Hrgruri\Saori;
+namespace Taniko\Saori;
 
-use Hrgruri\Saori\Maker;
-use Hrgruri\Saori\Exception\{
-    GeneratorException,
-    JsonException
+use Illuminate\Support\Collection;
+use Taniko\Saori\{
+    Maker,
+    Config,
+    Util
 };
-use Hrgruri\Saori\Generator\{
+use Taniko\Saori\Generator\{
     IndexGenerator,
     UserPageGenerator,
     ArticleGenerator,
@@ -14,71 +15,82 @@ use Hrgruri\Saori\Generator\{
     FeedGenerator,
     ThemePageGenerator
 };
-use cebe\markdown\GithubMarkdown;
 
 class SiteGenerator
 {
-    private $root;      // directory
-    private $url;       // site url
-    private $paths;
+    private $url;
+    private $root;
+    private $public;
     private $config;        // blog config
-    private $theme_config;  // theme config
-    private $ut_config;     // user theme config
-    private static $articles;
-    private static $tag_list;
-    private static $css_files;
+    private $articles;
+    private $tag_list;
+    private $css_files;
+    private $theme_dir;
 
-    public function __construct(array $paths, \stdClass $config, \stdClass $tc, \stdClass $ut)
+    public function __construct(Config $config, Collection $articles)
     {
-        $this->paths        =   $paths;
-        $this->config       =   $config;
-        $this->theme_config =   $tc;
-        $this->ut_config    =   $ut;
+        $this->config    = $config;
+        $this->articles  = $articles;
+        $this->tag_list  = TagPageGenerator::getTagList($articles);
+        $this->theme_dir = $this->config->themes[$this->config->env['theme']];
+        $this->css_files = $this->getCssFiles("{$this->theme_dir}/css");
     }
 
     /**
      * generate site
-     * @param  string public|local
+     * @param  string 'public' or 'local'
      */
     public function generate(string $type)
     {
         $this->public   = ($type === 'public' ? true : false);
-        $this->url      = $this->public ? "https://{$this->config->id}.github.io" : $this->config->local;
-        $this->root     = $this->paths[$type];
-        $this->paths['root'] = $this->root;
-
-        if (!isset(self::$articles)) {
-            ArticleGenerator::cacheArticle($this->paths);
-            self::$articles = ArticleGenerator::getArticles($this->paths);
-            self::$tag_list = TagPageGenerator::getTagList(self::$articles);
-        }
-        $env = $this->getEnvironment();
-        $this->copyTheme();
+        $this->url      = $this->public ? $this->config->env['public'] : $this->config->env['local'];
+        $this->url      = rtrim($this->url, '/');
+        $this->root     = $this->config->root . ($this->public ? '/public' : '/local');
+        $this->copyTheme($this->theme_dir, $this->root);
         // copy user files
-        if (is_dir("{$this->paths['contents']}/file")) {
-            self::copyDirectory("{$this->paths['contents']}/file", $this->root);
+        if (is_dir("{$this->config->paths['contents']}/file")) {
+            Util::copyDirectory("{$this->config->paths['contents']}/file", $this->root);
         }
 
+        $env = $this->getEnvironment();
         IndexGenerator::generate($env);
         ArticleGenerator::generate($env);
-        TagPageGenerator::generate($env);
         FeedGenerator::generate($env);
+        TagPageGenerator::generate($env);
         UserPageGenerator::generate($env);
         ThemePageGenerator::generate($env);
     }
 
+    private function getCssFiles(string $source) : array
+    {
+        return [
+            'css'  => Util::getFileList($source, ['css']),
+            'twig' => Util::getFileList($source, ['twig'])
+        ];
+    }
+
+    private function copyTheme(string $source, string $dest)
+    {
+        if (is_dir("{$source}/css")) {
+            $this->copyCSS("{$source}/css", "{$dest}/css");
+        }
+        if (is_dir("{$source}/js")) {
+            Util::copyDirectory("{$source}/js", "{$dest}/js");
+        }
+        if (is_dir("{$source}/img")) {
+            Utill::copyDirectory("{$source}/img", "{$dest}/img");
+        }
+    }
+
     /**
-     * @return \Hrgruri\Saori\Maker
+     * @return \Taniko\Saori\Maker
      */
     private function getMaker()
     {
         return new Maker(
             $this->config,
-            self::$articles,
-            $this->paths['contents'],
-            $this->theme_config,
-            $this->ut_config,
-            self::$tag_list,
+            $this->articles,
+            $this->tag_list,
             $this->public,
             $this->url
         );
@@ -86,14 +98,16 @@ class SiteGenerator
 
     /**
      * get environment
-     * @return \Hrgruri\Saori\Generator\Environment
+     * @return \Taniko\Saori\Generator\Environment
      */
     private function getEnvironment()
     {
-        return new \Hrgruri\Saori\Generator\Environment(
+        $paths         = $this->config->paths;
+        $paths['root'] = $this->root;
+        return new \Taniko\Saori\Generator\Environment(
             $this->getMaker(),
-            $this->getTwigEnv("{$this->paths['theme']}/twig"),
-            $this->paths
+            $this->getTwigEnv("{$this->theme_dir}/twig"),
+            $paths
         );
     }
 
@@ -111,53 +125,6 @@ class SiteGenerator
             closedir($dh);
         }
         return $dirs;
-    }
-
-    private function copyTheme()
-    {
-        if (is_dir("{$this->paths['theme']}/css")) {
-            $this->copyCSS("{$this->paths['theme']}/css", "{$this->root}/css");
-        }
-        if (is_dir("{$this->paths['theme']}/js")) {
-            self::copyDirectory("{$this->paths['theme']}/js", "{$this->root}/js");
-        }
-        if (is_dir("{$this->paths['theme']}/img")) {
-            self::copyDirectory("{$this->paths['theme']}/img", "{$this->root}/img");
-        }
-    }
-
-    public static function copyDirectory(string $from, string $to)
-    {
-        if (!is_dir($to)) {
-            mkdir($to, 0700, true);
-        }
-        if (is_dir($from) && ($dh = opendir($from))) {
-            while (($file = readdir($dh)) !== false) {
-                if ($file === '.' || $file === '..') {
-                    continue;
-                } elseif (is_dir("{$from}/{$file}")) {
-                    self::copyDirectory("{$from}/{$file}", "{$to}/{$file}");
-                } else {
-                    copy("{$from}/{$file}", "{$to}/{$file}");
-                }
-            }
-            closedir($dh);
-        }
-    }
-
-    /**
-     * @param  string   $file filename
-     * @throws Hrgruri\Saori\Exception\JsonException
-     * @return mixed
-     */
-    public static function loadJson(string $file)
-    {
-        if (!file_exists($file)) {
-            throw new JsonException("{$file} is not exits");
-        } elseif (is_null($data = json_decode(file_get_contents($file)))) {
-            throw new JsonException("{$file} is broken");
-        }
-        return $data;
     }
 
     private function getTwigEnv(string $path) : \Twig_Environment
@@ -182,61 +149,30 @@ class SiteGenerator
         return $twig;
     }
 
-    /**
-     * @param  string $path
-     * @param  array  $exts extensions
-     * @return array
-     */
-    public static function getFileList(string $path, array $exts = null) : array
-    {
-        $files = [];
-        if (is_dir($path) && ($dh = opendir($path))) {
-            while (($file = readdir($dh)) !== false) {
-                if ($file === '.' || $file === '..' || $file === '.DS_Store') {
-                    continue;
-                } elseif (is_dir("{$path}/{$file}")) {
-                    $files = array_merge($files, self::getFileList("{$path}/{$file}", $exts));
-                } elseif (is_null($exts)) {
-                    $files[] = realpath("{$path}/{$file}");
-                } elseif (in_array(pathinfo("{$path}/{$file}", PATHINFO_EXTENSION), $exts)) {
-                    $files[] = realpath("{$path}/{$file}");
-                } else {
-                    continue;
-                }
-            }
-            closedir($dh);
-        }
-        return $files;
-    }
-
     private function copyCSS(string $from, string $to)
     {
-        if (!isset(self::$css_files)) {
-            self::$css_files = [];
-            self::$css_files['css'] = self::getFileList($from, ['css']);
-            self::$css_files['twig'] = self::getFileList($from, ['twig']);
-        }
-
-        foreach (self::$css_files['css'] as $source) {
+        foreach ($this->css_files['css'] as $source) {
             $dest = $to . substr($source, strlen($from));
-            if (!is_dir(dirname($dest))) {
-                mkdir(dirname($dest, true));
-            }
-            copy($source, $dest);
+            Util::copyFile($source, $dest);
         }
 
-        $twig = self::getTwigEnv($from);
+        $twig = $this->getTwigEnv($from);
         $maker = $this->getMaker();
-        foreach (self::$css_files['twig'] as $source) {
+        foreach ($this->css_files['twig'] as $source) {
             $source = substr($source, strlen($from));
             $dir    = dirname($to . substr($source, strlen($from)));
             if (preg_match('/(.*)\/(\w*)\.css\.twig$/', $source, $m) != 1) {
                 throw new LogicException("not matched css.twig");
             }
-            if (!is_dir($dir)) {
-                mkdir($dir, true);
-            }
-            file_put_contents("{$to}{$m[1]}/{$m[2]}.css", $twig->render($source, ['maker' => $maker]));
+            Util::putContents("{$to}{$m[1]}/{$m[2]}.css", $twig->render($source, ['maker' => $maker]));
         }
+    }
+
+    public static function validate(Config $config) : bool
+    {
+        if (!array_key_exists($config->env['theme'], $config->themes)) {
+            throw new \Exception("theme({$config->env['theme']}) is not exists");
+        }
+        return true;
     }
 }
