@@ -1,11 +1,11 @@
 # Saori
 [![Build Status](https://travis-ci.org/taniko/saori.svg?branch=ci)](https://travis-ci.org/taniko/saori)
 
-Saori is PHP static site generator for github.io
+Saori is PHP static site generator for blog
 
 ## Installation
 ```sh
-composer create-project hrgruri/saori-skeleton blog
+composer create-project taniko/saori-skeleton blog
 ```
 
 ## Usage
