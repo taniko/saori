@@ -20,7 +20,7 @@ php saori draft first_article
 
 # edit draft file
 vim draft/first_article/article.md
-vim draft/first_article/config.json
+vim draft/first_article/config.yml
 
 # post
 php saori post first_article
@@ -28,44 +28,59 @@ php saori post first_article
 # generate static site
 php saori build
 
-cd username.github.io
+# push to GitHub
+cd public
 git init
-git remote add origin git@github.com:username/username.github.io.git
+git remote add origin
+## username is your GitHub account
+git@github.com:username/username.github.io.git
 git add --all
 git commit -m 'Initial commit'
 git push origin master
 ```
 
-## Setting
-contents/config.json
-```json
-{
-    "id"        :   "username",
-    "local"     :   "http://localhost:8000",
-    "title"     :   "Example Blog",
-    "author"    :   "John",
-    "theme"     :   "saori",
-    "lang"      :   "en",
-    "link"      :   {
-        "github"    :   "https://github.com",
-        "twitter"   :   "https://twitter.com"
-    }
-}
+if you not set draft name, create draft/temp
+```sh
+php saori draft
+vim draft/temp/article.md
+vim draft/temp/config.yml
+
+# move temp to contents/article/YYYY/MM/DDHHMM
+php saori post temp
+php saori build
 ```
 
-contents/theme.json
-```json
-{
-    "saori": {
-        "color": {
-            "header"        : "#A9EEE6",
-            "title"         : "#F7FBFC",
-            "body"          : "#FEFAEC",
-            "page-contents" : "#FFF1CF"
-        },
-        "date-format" : "F j, Y"
-    }
-}
+## Setting
+config/env.yml
+```yml
+title: Example Blog
+author: John
+local: 'http://localhost:8000'
+public: 'https://example.com'
+theme: saori
+lang: en
+link:
+    GitHub: 'https://github.com/'
+    Twitter: 'https://twitter.com/'
+    'Speaker Deck': 'https://speakerdeck.com/'
+feed:
+    type: atom
+    number: 50
+google-analytics : null
+share:
+    - twitter
+    - pocket
+```
+
+config/theme.yml
+```yml
+saori:
+    color:
+        header        : '#A9EEE6'
+        title         : '#F7FBFC'
+        body          : '#FEFAEC'
+        page-contents : '#FFF1CF'
+    date-format: 'F j, Y'
 ```
 
 ***
