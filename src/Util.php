@@ -9,17 +9,17 @@ class Util
      * mkdir and put file
      * @param  string $filename output file name
      * @param  mixed $data contents data
-     * @return mixed if successed, return bytes. if failed, return false
      * @throws \Exception
+     * @return mixed if successed, return bytes. if failed, return false
      */
-    public static function putContents(string $filename, $data)
+    public static function putContents(string $filename, $data, bool $override = false)
     {
         $result = false;
         $dirname = dirname($filename);
         if (!file_exists($dirname)) {
             mkdir($dirname, 0700, true);
         }
-        if (!file_exists($filename)) {
+        if (!file_exists($filename) || $override) {
             $result = file_put_contents($filename, $data);
         } else {
             throw new \Exception("{$filename} is already exists");
@@ -33,9 +33,9 @@ class Util
      * @param  mixed $data contents data
      * @return mixed if successed, return bytes. if failed, return false
      */
-    public static function putYamlContents(string $filename, $data)
+    public static function putYamlContents(string $filename, $data, bool $override = false)
     {
-        return self::putContents($filename, Yaml::dump($data));
+        return self::putContents($filename, Yaml::dump($data), $override);
     }
 
     /**
