@@ -84,8 +84,8 @@ class ArticleGenerator extends Generator
             } else {
                 return $first['config']['timestamp'] < $second['config']['timestamp'] ? -1 : 1;
             }
-        })->values()->map(function ($data, $key) use ($url) {
-            return new Article($key, $data, $url);
+        })->values()->map(function ($data, $key) {
+            return new Article($key, $data);
         });
     }
 }

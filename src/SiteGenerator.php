@@ -42,7 +42,7 @@ class SiteGenerator
      */
     public function generate(string $type)
     {
-        $this->public   = ($type === 'public' ? true : false);
+        $this->public   = $type === 'public';
         $this->url      = $this->public ? $this->config->env['public'] : $this->config->env['local'];
         $this->url      = rtrim($this->url, '/');
         $this->root     = $this->config->root . ($this->public ? '/public' : '/local');
@@ -51,6 +51,13 @@ class SiteGenerator
         if (is_dir("{$this->config->paths['contents']}/file")) {
             Util::copyDirectory("{$this->config->paths['contents']}/file", $this->root);
         }
+
+        // override articles url
+        $url = $this->url;
+        $this->articles = $this->articles->map(function ($article) use ($url) {
+            $article->setUrl($url);
+            return $article;
+        });
 
         $env = $this->getEnvironment();
         IndexGenerator::generate($env);

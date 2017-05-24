@@ -19,14 +19,13 @@ class Article
         'id', 'timestamp', 'title', 'link', 'newer_article', 'older_article', 'tags', 'url'
     ];
 
-    public function __construct(int $id, array $data, $url)
+    public function __construct(int $id, array $data)
     {
         $this->id           = $id;
         $this->timestamp    = $data['config']['timestamp'];
         $this->title        = $data['config']['title'];
         $this->tags         = $data['config']['tag'] ?? [];
         $this->link         = $data['link'];
-        $this->url          = "{$url}/article{$this->link}";
     }
 
     public function __get($name)
@@ -47,6 +46,11 @@ class Article
         } else {
             return null;
         }
+    }
+
+    public function setUrl(string $url)
+    {
+        $this->url = "{$url}/article{$this->link}";
     }
 
     public function setOlderArticle(Article $article)
