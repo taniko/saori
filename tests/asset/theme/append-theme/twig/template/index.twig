@@ -1,7 +1,7 @@
 {% extends 'base/main.twig' %}
 
 {% block main_block %}
-    {% for article in maker.getNewestArticle(maker.theme_config.size) %}
+    {% for article in maker.getNewestArticles(maker.theme_config.size) %}
         {% include 'base/article.twig' %}
     {% endfor %}
     <nav class="pager">

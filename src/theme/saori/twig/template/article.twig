@@ -1,6 +1,6 @@
 {% extends "base/main.twig" %}
 
-{% block title %}{{article.title}} - {{maker.config('title')}}{% endblock %}
+{% block title %}{{article.title}} - {{maker.env('title')}}{% endblock %}
 
 {% block main_block %}
     {% set newer_article = maker.getNewerArticles(article, 1).first() %}

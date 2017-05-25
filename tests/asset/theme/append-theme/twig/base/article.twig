@@ -14,7 +14,7 @@
         {% endautoescape %}
     </div>
     <div class="article-share">
-        {% set share_list = maker.config('share') %}
+        {% set share_list = maker.env('share') %}
         {% if 'twitter' in share_list %}
             <a href="https://twitter.com/share" class="twitter-share-button" data-url="{{maker.url}}{{article.link}}" data-text="{{article.title}} - {{maker.title}}">Tweet</a>
         {% endif %}
