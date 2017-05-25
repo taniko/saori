@@ -118,6 +118,7 @@ class Util
         if (!is_dir($dir)) {
             mkdir($dir, 0700, true);
         }
+        copy($source, $dest);
     }
 
     /**
