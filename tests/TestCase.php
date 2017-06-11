@@ -114,6 +114,6 @@ class TestCase extends \PHPUnit\Framework\TestCase
     protected function getArticlesByAsset()
     {
         $paths = ArticleGenerator::collectArticlePaths("{$this->root}/contents/article");
-        return ArticleGenerator::createArticles($paths, $this->url);
+        return ArticleGenerator::createArticles($paths);
     }
 }

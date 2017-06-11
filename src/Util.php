@@ -7,8 +7,9 @@ class Util
 {
     /**
      * mkdir and put file
-     * @param  string $filename output file name
-     * @param  mixed $data contents data
+     * @param  string   $filename output file name
+     * @param  mixed    $data contents data
+     * @param  bool     $override if a file already exists, save the data
      * @throws \Exception
      * @return mixed if successed, return bytes. if failed, return false
      */
@@ -29,8 +30,9 @@ class Util
 
     /**
      * mkdir and put yaml file
-     * @param  string $filename output file name
-     * @param  mixed $data contents data
+     * @param  string   $filename output file name
+     * @param  mixed    $data contents data
+     * @param  bool     $override if a file already exists, save the data
      * @return mixed if successed, return bytes. if failed, return false
      */
     public static function putYamlContents(string $filename, $data, bool $override = false)

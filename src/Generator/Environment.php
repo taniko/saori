@@ -24,7 +24,7 @@ class Environment
     /**
      * get property of Environment or Maker
      * @param  string $name
-     * @throws LogicException if failed getting property
+     * @throws \LogicException if failed getting property
      * @return mixed
      */
     public function __get(string $name)

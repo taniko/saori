@@ -3,7 +3,6 @@ namespace Taniko\Saori;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Taniko\Saori\Config;
 use Taniko\Saori\Console\{
     ThemeCommand,
     InitCommand,
@@ -88,6 +87,6 @@ class Application extends \Symfony\Component\Console\Application
 
     public function getThemes()
     {
-            return $this->config['themes'];
+        return $this->config['themes'];
     }
 }

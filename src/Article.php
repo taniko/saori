@@ -2,7 +2,6 @@
 namespace Taniko\Saori;
 
 use cebe\markdown\GithubMarkdown;
-use Taniko\Saori\Util;
 
 class Article
 {
@@ -96,9 +95,11 @@ class Article
     }
 
     /**
-     * cacheing article html
+     * caching article html
+     * @param string $source path to source directory
+     * @param string $dist   path to saving directory
      */
-    public function cache($source, $dist)
+    public function cache(string $source, string $dist)
     {
         $this->cache = "{$dist}{$this->link}";
         $file = "{$source}{$this->link}/article.md";

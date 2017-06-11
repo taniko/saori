@@ -1,9 +1,6 @@
 <?php
 namespace Taniko\Saori;
 
-use Taniko\Saori\Article;
-use Taniko\Saori\Config;
-use Taniko\Saori\Exception\GeneratorException;
 use cebe\markdown\GithubMarkdown;
 use Illuminate\Support\Collection;
 
@@ -206,7 +203,7 @@ class Maker
 
     /**
      * get tag list
-     * @return array
+     * @return Collection
      */
     public function getTagList() : Collection
     {

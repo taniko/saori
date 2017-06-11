@@ -1,9 +1,8 @@
 <?php
 namespace Taniko\Saori\Generator;
 
-use Taniko\Saori\Article;
 use Taniko\Saori\Util;
-use FeedWriter\{Item, ATOM, Feed};
+use FeedWriter\ATOM;
 
 class FeedGenerator extends Generator
 {

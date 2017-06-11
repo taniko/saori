@@ -22,7 +22,7 @@ class ArticleGeneratorTest extends \TestCase
     public function testCreateArticles()
     {
         $paths    = ArticleGenerator::collectArticlePaths("{$this->root}/contents/article");
-        $articles = ArticleGenerator::createArticles($paths, $this->url);
+        $articles = ArticleGenerator::createArticles($paths);
         $this->assertContainsOnly(\Taniko\Saori\Article::class, $articles);
     }
 }

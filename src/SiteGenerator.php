@@ -169,7 +169,7 @@ class SiteGenerator
             $source = substr($source, strlen($from));
             $dir    = dirname($to . substr($source, strlen($from)));
             if (preg_match('/(.*)\/(\w*)\.css\.twig$/', $source, $m) != 1) {
-                throw new LogicException("not matched css.twig");
+                throw new \LogicException("not matched css.twig");
             }
             Util::putContents("{$to}{$m[1]}/{$m[2]}.css", $twig->render($source, ['maker' => $maker]));
         }

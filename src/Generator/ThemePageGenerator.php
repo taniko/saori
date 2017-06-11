@@ -15,7 +15,7 @@ class ThemePageGenerator extends Generator
             $files = array_values(array_diff($files, $twig_files));
         }
         foreach ($files as $file) {
-            self::copyFile(
+            Util::copyFile(
                 $file,
                 "{$env->paths['root']}/".self::trimFilePath($file, "{$env->paths['theme']}/twig/page")
             );

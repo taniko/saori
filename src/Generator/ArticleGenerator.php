@@ -1,7 +1,6 @@
 <?php
 namespace Taniko\Saori\Generator;
 
-use cebe\markdown\GithubMarkdown;
 use Illuminate\Support\Collection;
 use Taniko\Saori\{
     Article,
@@ -43,9 +42,9 @@ class ArticleGenerator extends Generator
         });
     }
 
-    public static function getArticles(string $dir, string $url)
+    public static function getArticles(string $dir)
     {
-        return self::createArticles(self::collectArticlePaths($dir), $url);
+        return self::createArticles(self::collectArticlePaths($dir));
     }
 
     /**
@@ -69,7 +68,7 @@ class ArticleGenerator extends Generator
      * @param  Collection $items article paths
      * @return Collection        article instances
      */
-    public static function createArticles(Collection $items, $url) : Collection
+    public static function createArticles(Collection $items) : Collection
     {
         return $items->map(function ($item) {
             $config = Util::getYamlContents("{$item['path']}/config.yml");
@@ -80,7 +79,7 @@ class ArticleGenerator extends Generator
             ];
         })->sort(function ($first, $second) {
             if ($first['config']['timestamp'] === $second['config']['timestamp']) {
-                return strnatcmp($first['config']['title'], $second['config'['title']]);
+                return strnatcmp($first['config']['title'], $second['config']['title']);
             } else {
                 return $first['config']['timestamp'] < $second['config']['timestamp'] ? -1 : 1;
             }

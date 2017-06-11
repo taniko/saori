@@ -1,7 +1,6 @@
 <?php
 namespace Taniko\Saori\Console;
 
-use Symfony\Component\Console\Input\InputArgumet;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Taniko\Saori\Util;

@@ -1,7 +1,6 @@
 <?php
 namespace Taniko\Saori\Generator;
 
-use Taniko\Saori\Article;
 use Taniko\Saori\Util;
 use Illuminate\Support\Collection;
 
