@@ -31,9 +31,8 @@ php saori build
 # push to GitHub
 cd public
 git init
-git remote add origin
 ## username is your GitHub account
-git@github.com:username/username.github.io.git
+git remote add origin git@github.com:username/username.github.io.git
 git add --all
 git commit -m 'Initial commit'
 git push origin master
