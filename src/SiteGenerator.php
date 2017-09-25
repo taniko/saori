@@ -175,11 +175,18 @@ class SiteGenerator
         }
     }
 
-    public static function validate(Config $config) : bool
+    /**
+     * validate environment
+     * @param  Taniko\Saori\Config $config
+     * @throws \Exception
+     */
+    public static function validate(Config $config)
     {
-        if (!array_key_exists($config->env['theme'], $config->themes)) {
-            throw new \Exception("theme({$config->env['theme']}) is not exists");
+        $required = ['title', 'author', 'public', 'local', 'theme', 'lang'];
+        foreach ($required as $value) {
+            if (!isset($config->env[$value])) {
+                throw new \Exception("{$value} is not setted in config/env.yml");
+            }
         }
-        return true;
     }
 }
