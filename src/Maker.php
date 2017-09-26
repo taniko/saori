@@ -105,7 +105,9 @@ class Maker
         $result = null;
         $keys   = explode('.', $key);
         $theme  = $this->theme_setting;
-        if ($override) {
+
+        // Get theme value that defined by user
+        if ($override && isset($this->config->theme[$this->env('theme')])) {
             $break = false;
             $theme = $this->config->theme[$this->env('theme')];
             foreach ($keys as $key) {
@@ -120,6 +122,8 @@ class Maker
                 $result = $theme;
             }
         }
+
+        // If not setted by user, get theme value that defined by source theme
         if (!isset($result)) {
             $break = false;
             $theme  = $this->theme_setting;
