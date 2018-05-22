@@ -3,7 +3,9 @@
 use Taniko\Saori\Generator\ArticleGenerator;
 use Taniko\Saori\Application;
 use Taniko\Saori\Util;
-use Faker\Factory as Faker;
+use Taniko\Saori\Article;
+use Faker\Factory;
+use Faker\Generator;
 use org\bovigo\vfs\{
     vfsStream,
     vfsStreamWrapper,
@@ -12,9 +14,11 @@ use org\bovigo\vfs\{
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
+    private $article_id;
     protected $root;
     protected $asset;
     protected $url = 'http://localhost:8000';
+    protected $faker;
 
     public function setUp()
     {
@@ -22,7 +26,9 @@ class TestCase extends \PHPUnit\Framework\TestCase
         vfsStreamWrapper::setRoot(new vfsStreamDirectory('blog'));
         $this->root  = vfsStream::url('blog');
         $this->asset = __DIR__.'/asset';
+        $this->article_id = 1;
     }
+
     /**
      * @param  mixed    $instance
      * @param  string   $name method name
@@ -62,7 +68,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
         \stdClass $config       = null,
         array $paths            = null
     ) {
-        $faker = $faker ?? Faker::create();
+        $faker = $faker ?? Factory::create();
         $article = new \Taniko\Saori\Article(
             $id     ?? rand(),
             $config ?? $this->createArticleConfig($faker),
@@ -82,7 +88,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
      */
     protected function makeArticleConfig(\Faker\Generator $faker = null) : \stdClass
     {
-        $faker  = $faker ?? Faker::create();
+        $faker  = $faker ?? Factory::create();
         $config = new \stdClass;
         $config->title      = $faker->text(20);
         $config->tag        = $faker->words(3, false);
@@ -115,5 +121,24 @@ class TestCase extends \PHPUnit\Framework\TestCase
     {
         $paths = ArticleGenerator::collectArticlePaths("{$this->root}/contents/article");
         return ArticleGenerator::createArticles($paths);
+    }
+
+    protected function faker(): Generator
+    {
+        if (!isset($this->faker)) {
+            $this->faker = Factory::create();
+        }
+        return $this->faker;
+    }
+
+    /**
+     * create article data
+     * @return string path to article data directory
+     */
+    protected function createArticleData(): string
+    {
+        $faker = $this->faker();
+        $timestamp = $faker->dateTimeBetween('-1 years')->getTimestamp();
+        return '';
     }
 }
