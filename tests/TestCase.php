@@ -132,13 +132,39 @@ class TestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * create article data
-     * @return string path to article data directory
+     * generate article and config files
+     * @param string $root
+     * @param DateTime|null $datetime
+     * @param string|null $slug
+     * @param array $options
+     * @return bool
      */
-    protected function createArticleData(): string
-    {
+    protected function generateArticleFile(
+        string $root,
+        \DateTime $datetime = null,
+        string $slug = null,
+        array $options = []
+    ): bool {
+        if (isset($slug) && preg_match('/^[\w-_]+$/', $slug) !== 1) {
+            throw new \InvalidArgumentException('slug must be alphabet(s) or underscore');
+        }
+        if ($datetime === null) {
+            $datetime = $this->faker()->dateTimeBetween('-1 years');
+        }
+
+        $dir = implode('/', [$root, $datetime->format('Y/m/'), $slug ?? $datetime->format('His')]);
         $faker = $this->faker();
-        $timestamp = $faker->dateTimeBetween('-1 years')->getTimestamp();
-        return '';
+        try {
+            Util::putContents("{$dir}/article.md", '');
+            Util::putYamlContents("{$dir}/config.yml", [
+                'title' => $options['title'] ?? $faker->words(2, true),
+                'tag' => $options['tag'] ?? [],
+                'timestamp' => $datetime->getTimestamp(),
+            ]);
+            $result = true;
+        } catch (\Exception $e) {
+            $result = false;
+        }
+        return $result;
     }
 }

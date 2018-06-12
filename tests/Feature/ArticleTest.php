@@ -5,7 +5,7 @@ class ArticleTest extends \TestCase
 {
     public function testCreate()
     {
-        $this->createArticleData();
+        $this->generateArticleFile("{$this->root}/contents");
         $this->assertTrue(true);
     }
 }
