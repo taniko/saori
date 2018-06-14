@@ -3,7 +3,6 @@ namespace Test\Generator;
 
 use Taniko\Saori\Generator\ArticleGenerator;
 use Taniko\Saori\Util;
-use Illuminate\Support\Collection;
 use Taniko\Saori\Generator\tagPageGenerator;
 
 class TagPageGeneratorTest extends \TestCase

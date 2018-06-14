@@ -1,7 +1,6 @@
 <?php
 namespace Taniko\Saori\Generator;
 
-use function foo\func;
 use Taniko\Saori\Util;
 use Illuminate\Support\Collection;
 
@@ -88,6 +87,5 @@ class TagPageGenerator extends Generator
         return array_filter($lowers, function ($item) {
             return count($item) > 1;
         });
-
     }
 }
