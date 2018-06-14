@@ -36,6 +36,11 @@ class TagPageGenerator extends Generator
         });
     }
 
+    /**
+     * @param Collection $articles
+     * @throws \RuntimeException
+     * @return Collection
+     */
     public static function getTagList(Collection $articles) : Collection
     {
         $tags = [];
@@ -48,6 +53,39 @@ class TagPageGenerator extends Generator
             $tags[$key] = Collection::make($tags[$key]);
         }
         ksort($tags, SORT_NATURAL);
-        return Collection::make($tags);
+        $tags = Collection::make($tags);
+
+        $duplicated = self::pluckDuplicatedTags($tags);
+        if (count($duplicated)) {
+            $msg = "Duplicate tag error. Please unify uppercase letters and lowercase letters.\n\n";
+            foreach ($duplicated as $lower => $items) {
+                $msg .= 'tags: ' . implode(', ', $items). "\n";
+                foreach ($items as $item) {
+                    $msg .= "  * {$item}\n";
+                    foreach ($tags[$item] as $id) {
+                        $msg .= "    - /contents/article{$articles[$id]->link}\n";
+                    }
+                }
+                $msg .= "\n";
+            }
+            throw new \RuntimeException($msg);
+        }
+
+        return $tags;
+    }
+
+    /**
+     * @param Collection $tags
+     * @return array
+     */
+    private static function pluckDuplicatedTags(Collection $tags) : array
+    {
+        $lowers = [];
+        foreach ($tags as $tag => $items) {
+            $lowers[strtolower($tag)][] = $tag;
+        }
+        return array_filter($lowers, function ($item) {
+            return count($item) > 1;
+        });
     }
 }

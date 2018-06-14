@@ -3,7 +3,9 @@
 use Taniko\Saori\Generator\ArticleGenerator;
 use Taniko\Saori\Application;
 use Taniko\Saori\Util;
-use Faker\Factory as Faker;
+use Taniko\Saori\Article;
+use Faker\Factory;
+use Faker\Generator;
 use org\bovigo\vfs\{
     vfsStream,
     vfsStreamWrapper,
@@ -15,6 +17,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
     protected $root;
     protected $asset;
     protected $url = 'http://localhost:8000';
+    protected $faker;
 
     public function setUp()
     {
@@ -23,6 +26,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
         $this->root  = vfsStream::url('blog');
         $this->asset = __DIR__.'/asset';
     }
+
     /**
      * @param  mixed    $instance
      * @param  string   $name method name
@@ -62,7 +66,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
         \stdClass $config       = null,
         array $paths            = null
     ) {
-        $faker = $faker ?? Faker::create();
+        $faker = $faker ?? Factory::create();
         $article = new \Taniko\Saori\Article(
             $id     ?? rand(),
             $config ?? $this->createArticleConfig($faker),
@@ -82,7 +86,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
      */
     protected function makeArticleConfig(\Faker\Generator $faker = null) : \stdClass
     {
-        $faker  = $faker ?? Faker::create();
+        $faker  = $faker ?? Factory::create();
         $config = new \stdClass;
         $config->title      = $faker->text(20);
         $config->tag        = $faker->words(3, false);
@@ -115,5 +119,50 @@ class TestCase extends \PHPUnit\Framework\TestCase
     {
         $paths = ArticleGenerator::collectArticlePaths("{$this->root}/contents/article");
         return ArticleGenerator::createArticles($paths);
+    }
+
+    protected function faker(): Generator
+    {
+        if (!isset($this->faker)) {
+            $this->faker = Factory::create();
+        }
+        return $this->faker;
+    }
+
+    /**
+     * generate article and config files
+     * @param string $root
+     * @param DateTime|null $datetime
+     * @param string|null $slug
+     * @param array $options
+     * @return bool
+     */
+    protected function generateArticleFile(
+        string $root,
+        \DateTime $datetime = null,
+        string $slug = null,
+        array $options = []
+    ): bool {
+        if (isset($slug) && preg_match('/^[\w-_]+$/', $slug) !== 1) {
+            throw new \InvalidArgumentException('slug must be alphabet(s) or underscore');
+        }
+        if ($datetime === null) {
+            $datetime = $this->faker()->dateTimeBetween('-1 years');
+        }
+
+        $dir = implode('/', [$root, $datetime->format('Y/m/'), $slug ?? $datetime->format('His')]);
+        $faker = $this->faker();
+        try {
+            Util::putContents("{$dir}/article.md", '');
+            Util::putYamlContents("{$dir}/config.yml", [
+                'title' => $options['title'] ?? $faker->words(2, true),
+                'tag' => $options['tag'] ?? [],
+                'timestamp' => $datetime->getTimestamp(),
+            ]);
+            $result = true;
+        } catch (\Exception $e) {
+            $result = false;
+        }
+        return $result;
     }
 }
