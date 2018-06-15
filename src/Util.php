@@ -15,7 +15,6 @@ class Util
      */
     public static function putContents(string $filename, $data, bool $override = false)
     {
-        $result = false;
         $dirname = dirname($filename);
         if (!file_exists($dirname)) {
             mkdir($dirname, 0700, true);
@@ -29,11 +28,11 @@ class Util
     }
 
     /**
-     * mkdir and put yaml file
-     * @param  string   $filename output file name
-     * @param  mixed    $data contents data
-     * @param  bool     $override if a file already exists, save the data
-     * @return mixed if successed, return bytes. if failed, return false
+     * @param string $filename
+     * @param $data
+     * @param bool $override
+     * @return mixed
+     * @throws \Exception
      */
     public static function putYamlContents(string $filename, $data, bool $override = false)
     {

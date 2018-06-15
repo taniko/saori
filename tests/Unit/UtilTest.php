@@ -18,7 +18,7 @@ class UtilTest extends \TestCase
             'name' => 'saori'
         ];
         $this->assertFalse(file_exists($filename));
-        $res = Util::putYamlContents($filename, $data);
+        Util::putYamlContents($filename, $data);
         $this->assertTrue(file_exists($filename));
         $this->assertEquals($data, Yaml::parse(file_get_contents($filename)));
     }

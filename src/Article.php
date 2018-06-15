@@ -2,29 +2,55 @@
 namespace Taniko\Saori;
 
 use cebe\markdown\GithubMarkdown;
+use Symfony\Component\Yaml\Yaml;
 
 class Article
 {
+    private $source;
+    private $path;
     private $url;
     private $id;
     private $cache;
     private $timestamp;
     private $title;
-    private $link;
     private $newer_article;
     private $older_article;
     private $tags;
     private $allow_properties = [
-        'id', 'timestamp', 'title', 'link', 'newer_article', 'older_article', 'tags', 'url'
+        'id', 'timestamp', 'title', 'newer_article', 'older_article', 'tags', 'url', 'path'
     ];
 
-    public function __construct(int $id, array $data)
+    private function __construct(string $source, string $path, array $config)
     {
-        $this->id           = $id;
-        $this->timestamp    = $data['config']['timestamp'];
-        $this->title        = $data['config']['title'];
-        $this->tags         = $data['config']['tag'] ?? [];
-        $this->link         = $data['link'];
+        $this->source       = $source;
+        $this->path         = $path;
+        $this->timestamp    = $config['timestamp'];
+        $this->title        = $config['title'];
+        $this->tags         = $config['tag'] ?? [];
+    }
+
+    /**
+     * @param string $source
+     * @return Article
+     */
+    public static function create(string $source): Article
+    {
+        $config_file = "{$source}/config.yml";
+        preg_match('/(.*)\/([0-9]{4}\/[0-9]{2}\/\w+)$/', $source, $m);
+        $config = Yaml::parse(file_get_contents($config_file));
+        $instance = new Article($source, $m[2], $config);
+        return $instance;
+    }
+
+    /**
+     * if id is undefined, set id
+     * @param int $id
+     */
+    public function setId(int $id)
+    {
+        if ($this->id === null) {
+            $this->id = $id;
+        }
     }
 
     public function __get($name)
@@ -49,7 +75,7 @@ class Article
 
     public function setUrl(string $url)
     {
-        $this->url = "{$url}/article{$this->link}";
+        $this->url = "{$url}/article/{$this->path}";
     }
 
     public function setOlderArticle(Article $article)
@@ -95,18 +121,26 @@ class Article
     }
 
     /**
-     * caching article html
-     * @param string $source path to source directory
-     * @param string $dist   path to saving directory
+     * @param string $dist
+     * @return string
+     * @throws \Exception
      */
-    public function cache(string $source, string $dist)
+    public function createCache(string $dist): string
     {
-        $this->cache = "{$dist}{$this->link}";
-        $file = "{$source}{$this->link}/article.md";
-        $dist = "{$dist}{$this->link}/article.html";
+        $this->cache = "{$dist}/{$this->path}";
         Util::putContents(
-            $dist,
-            (new GithubMarkdown)->parse(Util::rewriteImagePath($file, "/article{$this->link}"))
+            "{$this->cache}/article.html",
+            (new GithubMarkdown)->parse(Util::rewriteImagePath("{$this->source}/article.md", "/article/{$this->path}"))
         );
+        return $this->cache;
+    }
+
+    /**
+     * @param string|null $host
+     * @return string
+     */
+    public function url(string $host = null): string
+    {
+        return isset($host) ? "{$host}/article/{$this->path}" : "/article/{$this->path}";
     }
 }
