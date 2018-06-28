@@ -2,11 +2,6 @@
 namespace Taniko\Saori;
 
 use Illuminate\Support\Collection;
-use Taniko\Saori\{
-    Maker,
-    Config,
-    Util
-};
 use Taniko\Saori\Generator\{
     IndexGenerator,
     UserPageGenerator,
@@ -76,16 +71,16 @@ class SiteGenerator
         ];
     }
 
-    private function copyTheme(string $source, string $dest)
+    private function copyTheme(string $source, string $dist)
     {
         if (is_dir("{$source}/css")) {
-            $this->copyCSS("{$source}/css", "{$dest}/css");
+            $this->copyCSS("{$source}/css", "{$dist}/css");
         }
         if (is_dir("{$source}/js")) {
-            Util::copyDirectory("{$source}/js", "{$dest}/js");
+            Util::copyDirectory("{$source}/js", "{$dist}/js");
         }
         if (is_dir("{$source}/img")) {
-            Utill::copyDirectory("{$source}/img", "{$dest}/img");
+            Utill::copyDirectory("{$source}/img", "{$dist}/img");
         }
     }
 
@@ -176,8 +171,7 @@ class SiteGenerator
     }
 
     /**
-     * validate environment
-     * @param  Taniko\Saori\Config $config
+     * @param \Taniko\Saori\Config $config
      * @throws \Exception
      */
     public static function validate(Config $config)

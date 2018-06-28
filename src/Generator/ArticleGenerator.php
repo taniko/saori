@@ -24,7 +24,7 @@ class ArticleGenerator extends Generator
                 'maker' => $env->maker,
                 'article' => $article
             ]);
-            Util::putContents("{$env->paths['root']}/article{$article->link}/index.html", $html);
+            Util::putContents("{$env->paths['root']}/article/{$article->path}/index.html", $html);
         });
 
         /*  generate articles page  */
@@ -42,6 +42,10 @@ class ArticleGenerator extends Generator
         });
     }
 
+    /**
+     * @param string $dir
+     * @return Collection
+     */
     public static function getArticles(string $dir)
     {
         return self::createArticles(self::collectArticlePaths($dir));
@@ -52,13 +56,13 @@ class ArticleGenerator extends Generator
      * @param  string     $root path of contents/articles
      * @return Collection       article paths
      */
-    public static function collectArticlePaths(string $root) : Collection
+    private static function collectArticlePaths(string $root) : Collection
     {
         return Collection::make(Util::getFileList($root, ['md']))->map(function ($item) {
             return
                 preg_match('/(.*)\/([0-9]{4}\/[0-9]{2}\/\w+)\/article\.md$/', $item, $m) === 1
                     && file_exists("{$m[1]}/{$m[2]}/config.yml")
-                ? ['path' => "{$m[1]}/{$m[2]}", 'link' => "/{$m[2]}"]
+                ? "{$m[1]}/{$m[2]}"
                 : null;
         })->filter();
     }
@@ -68,23 +72,19 @@ class ArticleGenerator extends Generator
      * @param  Collection $items article paths
      * @return Collection        article instances
      */
-    public static function createArticles(Collection $items) : Collection
+    private static function createArticles(Collection $items) : Collection
     {
         return $items->map(function ($item) {
-            $config = Util::getYamlContents("{$item['path']}/config.yml");
-            return [
-                'link'   => $item['link'],
-                'path'   => $item['path'],
-                'config' => $config
-            ];
-        })->sort(function ($first, $second) {
-            if ($first['config']['timestamp'] === $second['config']['timestamp']) {
-                return strnatcmp($first['config']['title'], $second['config']['title']);
+            return Article::create($item);
+        })->filter()->sort(function ($first, $second) {
+            if ($first->timestamp === $second->timestamp) {
+                return strnatcmp($first->title, $second->title);
             } else {
-                return $first['config']['timestamp'] < $second['config']['timestamp'] ? -1 : 1;
+                return $first->timestamp < $second->timestamp ? -1 : 1;
             }
-        })->values()->map(function ($data, $key) {
-            return new Article($key, $data);
+        })->map(function (Article $article, $key) {
+            $article->setId($key);
+            return $article;
         });
     }
 }

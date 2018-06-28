@@ -78,7 +78,7 @@ class BuildCommand extends Command
             $articles        = ArticleGenerator::getArticles($this->config->path('article'), $url);
             $paths = $this->config->paths;
             $articles->each(function ($article) use ($paths) {
-                $article->cache($paths['article'], "{$paths['cache']}/article");
+                $article->createCache("{$paths['cache']}/article");
             });
             $this->generator = new SiteGenerator($this->config, $articles);
             $this->called    = true;

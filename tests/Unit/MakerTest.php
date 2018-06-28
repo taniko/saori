@@ -20,7 +20,7 @@ class MakerTest extends \TestCase
         $this->copyAsset();
         if (!isset($this->maker)) {
             $app = $this->getApplication();
-            $articles = ArticleGenerator::getArticles("{$this->root}/contents/article", $this->url);
+            $articles = ArticleGenerator::getArticles("{$this->root}/contents/article");
             $tag_list = TagPageGenerator::getTagList($articles);
             $this->config = new Config($this->getProperty($app, 'config'));
             $this->maker = new Maker(

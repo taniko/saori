@@ -2,7 +2,7 @@
 namespace Test\Generator;
 
 use Taniko\Saori\Util;
-use Illuminate\Support\Collection;
+use Taniko\Saori\Article;
 use Taniko\Saori\Generator\ArticleGenerator;
 
 class ArticleGeneratorTest extends \TestCase
@@ -13,16 +13,10 @@ class ArticleGeneratorTest extends \TestCase
         Util::copyDirectory("{$this->asset}/blog", $this->root);
     }
 
-    public function testCollectArticlePaths()
-    {
-        $paths = ArticleGenerator::collectArticlePaths("{$this->root}/contents/article");
-        $this->assertTrue($paths->count() > 0);
-    }
-
     public function testCreateArticles()
     {
-        $paths    = ArticleGenerator::collectArticlePaths("{$this->root}/contents/article");
-        $articles = ArticleGenerator::createArticles($paths);
-        $this->assertContainsOnly(\Taniko\Saori\Article::class, $articles);
+        $articles = ArticleGenerator::getArticles("{$this->root}/contents/article");
+        $this->assertTrue($articles->count() > 0);
+        $this->assertContainsOnly(Article::class, $articles);
     }
 }

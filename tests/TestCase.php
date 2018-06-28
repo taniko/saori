@@ -1,9 +1,7 @@
 <?php
 
-use Taniko\Saori\Generator\ArticleGenerator;
 use Taniko\Saori\Application;
 use Taniko\Saori\Util;
-use Taniko\Saori\Article;
 use Faker\Factory;
 use Faker\Generator;
 use org\bovigo\vfs\{
@@ -19,6 +17,9 @@ class TestCase extends \PHPUnit\Framework\TestCase
     protected $url = 'http://localhost:8000';
     protected $faker;
 
+    /**
+     * @throws \org\bovigo\vfs\vfsStreamException
+     */
     public function setUp()
     {
         vfsStreamWrapper::register();
@@ -28,10 +29,11 @@ class TestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param  mixed    $instance
-     * @param  string   $name method name
-     * @param  array    $args arguments
+     * @param $instance
+     * @param string $name
+     * @param array $args
      * @return mixed
+     * @throws ReflectionException
      */
     protected function callMethod($instance, string $name, array $args = [])
     {
@@ -40,6 +42,12 @@ class TestCase extends \PHPUnit\Framework\TestCase
         return $method->invokeArgs($instance, $args);
     }
 
+    /**
+     * @param $object
+     * @param $name
+     * @return mixed
+     * @throws ReflectionException
+     */
     protected static function getProperty($object, $name)
     {
         $reflector = new ReflectionClass(get_class($object));
@@ -51,33 +59,6 @@ class TestCase extends \PHPUnit\Framework\TestCase
     protected function getApplication() : Application
     {
         return new Application($this->root);
-    }
-
-    /**
-     * @param  \Faker\Generator $faker
-     * @param  int              $id
-     * @param  stdClass         $config
-     * @param  array            $paths
-     * @return \Taniko\Saori\Article
-     */
-    protected function makeArticle(
-        \Faker\Generator $faker = null,
-        int $id                 = null,
-        \stdClass $config       = null,
-        array $paths            = null
-    ) {
-        $faker = $faker ?? Factory::create();
-        $article = new \Taniko\Saori\Article(
-            $id     ?? rand(),
-            $config ?? $this->createArticleConfig($faker),
-            $paths  ?? ([
-                'cache' => '',
-                'link'  => '',
-                'newer' => '',
-                'older' => ''
-            ])
-        );
-        return $article;
     }
 
     /**
@@ -104,23 +85,27 @@ class TestCase extends \PHPUnit\Framework\TestCase
         return "{$this->root}/$name";
     }
 
+    /**
+     * @param string $name
+     * @return \Symfony\Component\Console\Tester\CommandTester
+     */
     protected function getTester(string $name)
     {
         $app  = new Taniko\Saori\Application($this->root);
         return new \Symfony\Component\Console\Tester\CommandTester($app->find($name));
     }
 
+    /**
+     *
+     */
     protected function copyAsset()
     {
         Util::copyDirectory("{$this->asset}/blog", $this->root);
     }
 
-    protected function getArticlesByAsset()
-    {
-        $paths = ArticleGenerator::collectArticlePaths("{$this->root}/contents/article");
-        return ArticleGenerator::createArticles($paths);
-    }
-
+    /**
+     * @return Generator
+     */
     protected function faker(): Generator
     {
         if (!isset($this->faker)) {
@@ -135,14 +120,17 @@ class TestCase extends \PHPUnit\Framework\TestCase
      * @param DateTime|null $datetime
      * @param string|null $slug
      * @param array $options
-     * @return bool
+     * @return null|string
      */
     protected function generateArticleFile(
-        string $root,
+        string $root = null,
         \DateTime $datetime = null,
         string $slug = null,
         array $options = []
-    ): bool {
+    ): ?string {
+        if (!isset($root)) {
+            $root = "{$this->root}/contents";
+        }
         if (isset($slug) && preg_match('/^[\w-_]+$/', $slug) !== 1) {
             throw new \InvalidArgumentException('slug must be alphabet(s) or underscore');
         }
@@ -150,7 +138,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
             $datetime = $this->faker()->dateTimeBetween('-1 years');
         }
 
-        $dir = implode('/', [$root, $datetime->format('Y/m/'), $slug ?? $datetime->format('His')]);
+        $dir = implode('/', [$root, $datetime->format('Y/m'), $slug ?? $datetime->format('His')]);
         $faker = $this->faker();
         try {
             Util::putContents("{$dir}/article.md", '');
@@ -159,9 +147,9 @@ class TestCase extends \PHPUnit\Framework\TestCase
                 'tag' => $options['tag'] ?? [],
                 'timestamp' => $datetime->getTimestamp(),
             ]);
-            $result = true;
+            $result = $dir;
         } catch (\Exception $e) {
-            $result = false;
+            $result = null;
         }
         return $result;
     }

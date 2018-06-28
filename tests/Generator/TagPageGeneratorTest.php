@@ -2,16 +2,14 @@
 namespace Test\Generator;
 
 use Taniko\Saori\Generator\ArticleGenerator;
-use Taniko\Saori\Util;
 use Taniko\Saori\Generator\tagPageGenerator;
 
 class TagPageGeneratorTest extends \TestCase
 {
     public function testGetTagList()
     {
-        Util::copyDirectory("{$this->asset}/blog", $this->root);
-
-        $articles = $this->getArticlesByAsset();
+        $this->copyAsset();
+        $articles = ArticleGenerator::getArticles("{$this->root}/contents/article");
         $tag_list = TagPageGenerator::getTagList($articles);
         foreach ($tag_list as $tag => $keys) {
             $keys = $keys->toArray();
