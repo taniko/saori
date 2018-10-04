@@ -14,8 +14,8 @@ use Taniko\Saori\Console\{
 
 class Application extends \Symfony\Component\Console\Application
 {
-    protected $path;
-    protected $config = [];
+    protected $paths;
+    protected $config;
     protected $commands = [
         ThemeCommand::class,
         InitCommand::class,
@@ -25,27 +25,42 @@ class Application extends \Symfony\Component\Console\Application
         BuildCommand::class,
     ];
 
-    public function __construct($path)
+    /**
+     * Application constructor.
+     * @param string $root
+     */
+    public function __construct(string $root)
     {
-        if (!preg_match('/^vfs:\/\//', $path) == 1) {
-            $path = realpath($path);
-        }
         parent::__construct();
-        $this->path = $path;
+
+        $root = $this->realpath($root);
+        $this->paths = [
+            'root'          => $root,
+            'themes'        => $this->collectThemePaths(realpath(__DIR__ . '/theme')),
+            'local_path'    => "{$root}/local",
+            'public_path'   => "{$root}/public",
+        ];
         $this->config = [
-            'root'   => $this->path,
-            'themes' => $this->collectThemePaths(realpath(__DIR__ . '/theme')),
-            'env'    => Util::getYamlContents("{$this->path}/config/env.yml"),
-            'theme'  => Util::getYamlContents("{$this->path}/config/theme.yml") ?? []
+            'env'    => Util::getYamlContents("{$root}/config/env.yml"),
+            'theme'  => Util::getYamlContents("{$root}/config/theme.yml") ?? [],
         ];
     }
 
+    /**
+     * @param InputInterface|null $input
+     * @param OutputInterface|null $output
+     * @return int
+     * @throws \Exception
+     */
     public function run(InputInterface $input = null, OutputInterface $output = null)
     {
         $this->registerCommands();
         return parent::run();
     }
 
+    /**
+     *
+     */
     private function registerCommands()
     {
         $config = new Config($this->config);
@@ -58,6 +73,19 @@ class Application extends \Symfony\Component\Console\Application
         }
     }
 
+    /**
+     * @param string $path
+     * @return string
+     */
+    private function realpath(string $path): string
+    {
+        return preg_match('/^vfs:\/\//', $path) == 1 ? $path : realpath($path);
+    }
+
+    /**
+     * @param string|null $dir
+     * @return array
+     */
     public function collectThemePaths(string $dir = null) : array
     {
         $result = [];
@@ -75,18 +103,47 @@ class Application extends \Symfony\Component\Console\Application
         return $result;
     }
 
+    /**
+     * @param string $name
+     * @param string $path
+     */
     public function addTheme(string $name, string $path)
     {
         $this->config['themes'][$name] = $path;
     }
 
+    /**
+     * @param string $name
+     */
     public function addCommand(string $name)
     {
         $this->commands[] = $name;
     }
 
+    /**
+     * @return mixed
+     */
     public function getThemes()
     {
         return $this->config['themes'];
+    }
+
+    /**
+     * @param string $path
+     */
+    public function setLocal(string $path)
+    {
+        print_r($this->config);
+        $this->config['local_path'] = $this->realpath($path);
+        print_r($this->config);
+
+    }
+
+    /**
+     * @param string $path
+     */
+    public function setPublic(string $path)
+    {
+        $this->config['public_pathl_path'] = $this->realpath($path);
     }
 }
