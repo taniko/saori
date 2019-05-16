@@ -33,14 +33,14 @@ class SiteGenerator
 
     /**
      * generate site
-     * @param  string 'public' or 'local'
+     * @param  string $type 'public' or 'local'
      */
     public function generate(string $type)
     {
         $this->public   = $type === 'public';
         $this->url      = $this->public ? $this->config->env['public'] : $this->config->env['local'];
         $this->url      = rtrim($this->url, '/');
-        $this->root     = $this->config->root . ($this->public ? '/public' : '/local');
+        $this->root     = $this->buildPath($this->config, $this->public);
         $this->copyTheme($this->theme_dir, $this->root);
         // copy user files
         if (is_dir("{$this->config->paths['contents']}/file")) {
@@ -182,5 +182,18 @@ class SiteGenerator
                 throw new \Exception("{$value} is not setted in config/env.yml");
             }
         }
+    }
+
+    /**
+     * generate path for build a site
+     * @param Config $config
+     * @param bool $public_build
+     * @return string
+     */
+    private function buildPath(Config $config, bool $public_build): string
+    {
+        return $public_build
+            ? $config->publicPath() ??  "{$config->root}/public"
+            : $config->localPath()  ??  "{$config->root}/local";
     }
 }

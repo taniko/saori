@@ -4,6 +4,8 @@ namespace Taniko\Saori;
 class Config
 {
     private $root;   // path to blog directory
+    private $local_path;
+    private $public_path;
     private $themes; // theme list
     private $theme;  // theme environment
     private $env;    // blog environment
@@ -16,6 +18,8 @@ class Config
         $this->env      = $config['env']    ?? [];
         $this->theme    = $config['theme']  ?? [];
         $this->paths    = $this->generatePaths($this->root);
+        $this->local_path = $config['local_path'];
+        $this->public_path = $config['public_path'];
     }
 
     public function __get(string $name)
@@ -55,5 +59,15 @@ class Config
     public function path(string $name)
     {
         return $this->paths[$name] ?? null;
+    }
+
+    public function localPath(): ?string
+    {
+        return $this->local_path;
+    }
+
+    public function publicPath() : ?string
+    {
+        return $this->public_path;
     }
 }
