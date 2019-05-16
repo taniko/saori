@@ -26,7 +26,7 @@ class DraftCommand extends Command
         $name = $input->getArgument('name') ?? 'temp';
         $dir    =   "{$this->root}/draft/{$name}";
         try {
-            if (preg_match('/^[\w-_]+$/', $name) !== 1) {
+            if (preg_match('/^[\w\-_]+$/', $name) !== 1) {
                 $str  = "includes characters that cannot be used\n";
                 $str .= "<comment>please enter a valid characters(a-z A-z 0-9 _ -)</comment>";
                 throw new \Exception($str);
