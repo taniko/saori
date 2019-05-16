@@ -131,7 +131,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
         if (!isset($root)) {
             $root = "{$this->root}/contents";
         }
-        if (isset($slug) && preg_match('/^[\w-_]+$/', $slug) !== 1) {
+        if (isset($slug) && preg_match('/^[\w\-_]+$/', $slug) !== 1) {
             throw new \InvalidArgumentException('slug must be alphabet(s) or underscore');
         }
         if ($datetime === null) {

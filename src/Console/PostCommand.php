@@ -87,6 +87,6 @@ class PostCommand extends Command
 
     private function validateTitle(string $title) : bool
     {
-        return (preg_match('/^[\w-_]+$/', $title) === 1);
+        return (preg_match('/^[\w\-_]+$/', $title) === 1);
     }
 }
